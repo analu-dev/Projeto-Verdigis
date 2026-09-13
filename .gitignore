@@ -9,6 +9,6 @@ __pycache__/
 # Banco de dados local
 db.sqlite3
 
-# Arquivos do sistema
+# Arquivos de sistema
 .DS_Store
 Thumbs.db
