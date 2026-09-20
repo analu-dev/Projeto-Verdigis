@@ -13,43 +13,34 @@ from .models import (
 
 
 def index(request):
-    
     secoes = SecaoConteudo.objects.filter(pagina=SecaoConteudo.PAGINA_INDEX)
-    
-    
     pilares = Pilar.objects.prefetch_related('praticas').all()
 
     context = {
         'secoes': secoes,
         'pilares': pilares,
     }
-    return render(request, 'index.html', context)
+    return render(request, 'forum/index.html', context)
 
 
 def quem_somos(request):
-    
     secoes = SecaoConteudo.objects.filter(pagina=SecaoConteudo.PAGINA_QUEM_SOMOS)
-    
-   
     membros = MembroEquipe.objects.filter(ativo=True)
 
     context = {
         'secoes': secoes,
         'membros': membros,
     }
-    return render(request, 'quem_somos.html', context)
+    return render(request, 'forum/quem_somos.html', context)
 
 
 def sobre_projeto(request):
-    
     secoes = SecaoConteudo.objects.filter(pagina=SecaoConteudo.PAGINA_SOBRE_PROJETO)
-    
     
     objetivos = ItemLista.objects.filter(categoria=ItemLista.CATEGORIA_OBJETIVO)
     praticas_fds = ItemLista.objects.filter(categoria=ItemLista.CATEGORIA_PRATICA_FDS)
     beneficios = ItemLista.objects.filter(categoria=ItemLista.CATEGORIA_BENEFICIO)
     
-   
     tecnologias = Tecnologia.objects.all()
     pilares = Pilar.objects.prefetch_related('praticas').all()
 
@@ -61,11 +52,10 @@ def sobre_projeto(request):
         'tecnologias': tecnologias,
         'pilares': pilares,
     }
-    return render(request, 'sobre_projeto.html', context)
+    return render(request, 'forum/sobre_projeto.html', context)
 
 
 def fale_conosco(request):
-    
     if request.method == 'POST':
         nome = request.POST.get('nome')
         email = request.POST.get('email')
@@ -73,7 +63,6 @@ def fale_conosco(request):
         assunto = request.POST.get('assunto')
         mensagem = request.POST.get('mensagem')
 
-        
         if nome and email and mensagem:
             Contato.objects.create(
                 nome=nome,
@@ -88,12 +77,9 @@ def fale_conosco(request):
         else:
             messages.error(request, 'Por favor, preencha todos os campos obrigatórios.')
 
-    
     assunto_choices = Contato.ASSUNTO_CHOICES
 
     context = {
         'assunto_choices': assunto_choices,
     }
-    return render(request, 'fale_conosco.html', context)
-
-
+    return render(request, 'forum/fale_conosco.html', context)
