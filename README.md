@@ -80,6 +80,9 @@ A régua de decisão do mercado mudou radicalmente nos últimos anos:
 
 ## Entrega 02:
 
+### Screencast de explicação do código Django
+[Link para o vídeo](https://youtu.be/i5UEh5MteiA)
+
 ## Entrega 03:
 
 ## Entrega 04:
