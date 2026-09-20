@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Fórum Verdigis</title>
-</head>
-<body>
-    <h1>Bem-vindo ao Fórum Verdigis!</h1>
-</body>
-</html>
+{% extends 'forum/base.html' %}
+
+{% block title %}Início - Verdigis{% endblock %}
+
+{% block content %}
+
+{% if secoes %}
+    {% for secao in secoes %}
+        <section class="secao-conteudo">
+            <h2>{{ secao.titulo }}</h2>
+            <p>{{ secao.texto|linebreaksbr }}</p>
+        </section>
+    {% endfor %}
+{% else %}
+    <section class="secao-conteudo">
+        <h2>Bem-vindo à Verdigis</h2>
+        <p>A plataforma dedicada à gestão de práticas ESG e sustentabilidade para o setor farmacêutico.</p>
+    </section>
+{% endif %}
+
+<h2>Pilares ESG & Práticas</h2>
+<div class="pilares-grid">
+    {% for pilar in pilares %}
+        <div class="pilar-card">
+            <span class="pilar-sigla">{{ pilar.sigla }}</span>
+            <h3>{{ pilar.nome }}</h3>
+            <p>{{ pilar.descricao }}</p>
+            
+            {% if pilar.praticas.all %}
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 1rem 0;">
+                <h4>Práticas Associadas:</h4>
+                <ul class="praticas-lista">
+                    {% for pratica in pilar.praticas.all %}
+                        <li>
+                            <strong>{{ pratica.titulo }}:</strong> 
+                            {{ pratica.descricao }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p><em>Sem práticas registadas para este pilar.</em></p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Ainda não existem pilares ESG registados na plataforma.</p>
+    {% endfor %}
+</div>
+
+{% endblock content %}

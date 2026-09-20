@@ -1,0 +1,45 @@
+{% extends 'forum/base.html' %}
+
+{% block title %}Fale Conosco - Verdigis{% endblock %}
+
+{% block content %}
+<section class="secao-form">
+    <h2>Fale Conosco</h2>
+    <p>Preencha o formulário abaixo para entrar em contacto com a nossa equipa.</p>
+
+    <form method="POST" action="{% url 'fale_conosco' %}" class="form-contato">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="nome">Nome Completo *</label>
+            <input type="text" id="nome" name="nome" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-mail *</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="empresa">Empresa / Farmácia</label>
+            <input type="text" id="empresa" name="empresa">
+        </div>
+
+        <div class="form-group">
+            <label for="assunto">Assunto *</label>
+            <select id="assunto" name="assunto" required>
+                {% for chave, valor in assunto_choices %}
+                    <option value="{{ chave }}">{{ valor }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="mensagem">Mensagem *</label>
+            <textarea id="mensagem" name="mensagem" rows="5" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Enviar Mensagem</button>
+    </form>
+</section>
+{% endblock content %}
