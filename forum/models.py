@@ -2,39 +2,6 @@ from django.db import models
 import datetime
 from django.utils import timezone
 
-
-class Pergunta(models.Model):
-    titulo = models.CharField(max_length=200, null=False)
-    detalhe = models.TextField(null=False)
-    tentativa = models.TextField()
-    data_criacao = models.DateTimeField("Criado em ")
-    usuario = models.CharField(max_length=200, null=False, default="anônimo")
-
-    def __str__(self):
-        return "[" + str(self.id) + "] " + self.titulo
-    
-    def foi_publicado_recentemente(self):
-        return self.data_criacao >= timezone.now() - datetime.timedelta(days=1)
-
-    def string_detalhada(self):
-        return "id: " + str(self.id) + "; titulo: " + self.titulo + "; detalhe: " + self.detalhe + "; tentativa: " + self.tentativa + "; data criação: " + str(self.data_criacao) + "; usuario: " + self.usuario
-
-
-class Resposta(models.Model):
-    pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
-    texto = models.TextField(null=False)
-    votos = models.IntegerField(default=0)
-    data_criacao = models.DateTimeField("Criado em ")
-    usuario = models.CharField(max_length=200, null=False, default="anônimo")
-
-
-    def __str__(self):
-        return "[" + str(self.id) + "] " + self.texto
-    
-    def foi_publicado_recentemente(self):
-        return self.data_criacao >= timezone.now() - datetime.timedelta(days=1)
-
-
 class SecaoConteudo(models.Model):
 
     PAGINA_INDEX = 'index'
@@ -62,8 +29,6 @@ class SecaoConteudo(models.Model):
 
 
 class MembroEquipe(models.Model):
-    """Integrante da equipe, exibido na pagina Quem Somos."""
-
     nome = models.CharField('Nome completo', max_length=150)
     email = models.EmailField('E-mail da school')
     curso = models.CharField('Curso e turma', max_length=100,
@@ -85,8 +50,6 @@ class MembroEquipe(models.Model):
 
 
 class Pilar(models.Model):
-    """Pilar do ESG: Ambiental, Social e Governanca."""
-
     sigla = models.CharField('Sigla', max_length=2)
     nome = models.CharField('Nome', max_length=60)
     descricao = models.TextField('Descrição')
@@ -102,8 +65,6 @@ class Pilar(models.Model):
 
 
 class ItemLista(models.Model):
-    """Item de lista exibido na pagina Sobre o Projeto."""
-
     CATEGORIA_OBJETIVO = 'objetivo'
     CATEGORIA_PRATICA_FDS = 'pratica_fds'
     CATEGORIA_BENEFICIO = 'beneficio'
@@ -129,8 +90,6 @@ class ItemLista(models.Model):
 
 
 class Tecnologia(models.Model):
-    """Tecnologia usada no desenvolvimento do produto."""
-
     nome = models.CharField('Nome', max_length=60)
     descricao = models.TextField('Descrição')
     ordem = models.PositiveIntegerField('Ordem', default=0)
@@ -166,8 +125,6 @@ class PraticaFarmacia(models.Model):
 
 
 class Contato(models.Model):
-    """Mensagem gravada pelo formulario da pagina Fale Conosco."""
-
     ASSUNTO_DUVIDA = 'duvida'
     ASSUNTO_PARCERIA = 'parceria'
     ASSUNTO_SUGESTAO = 'sugestao'
@@ -199,4 +156,3 @@ class Contato(models.Model):
 
     def __str__(self):
         return f'{self.nome} - {self.get_assunto_display()}'
-# Create your models here.
