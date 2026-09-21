@@ -105,7 +105,7 @@ A régua de decisão do mercado mudou radicalmente nos últimos anos:
 | Nome | E-mail |
 | :--- | :--- |
 | Ana Luiza Carvalho Xavier | alcx@cesar.school |
-| Carlos Henrique Corrêa de Araujo | chcass@cesar.school |
+| Carlos Henrique Corrêa de Araújo Soares de Sousa | chcass@cesar.school |
 | Carlos Vinicius Encarnação do Nascimento | cven@cesar.school |
 | João Pedro dos Santos Menezes | jpsm4@cesar.school |
 | João Marcelo Franca da Costa Casado | jmfcc@cesar.school |
