@@ -91,8 +91,6 @@ A régua de decisão do mercado mudou radicalmente nos últimos anos:
 
 ## Screencast do Deployment
 
-## Quadro da 2º Sprint
-
 
 
 ## Entrega 03:
