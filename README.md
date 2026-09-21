@@ -79,6 +79,10 @@ A régua de decisão do mercado mudou radicalmente nos últimos anos:
 
 
 ## Entrega 02:
+
+## Quadro do 2º Sprint
+![Print do Quadro de sprints](sprint/Sprint2.jpeg)
+
 ## Link do Site: 
 [Link para o site](https://projeto-verdigis.onrender.com)
 
