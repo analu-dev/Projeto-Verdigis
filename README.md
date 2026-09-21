@@ -79,9 +79,17 @@ A régua de decisão do mercado mudou radicalmente nos últimos anos:
 
 
 ## Entrega 02:
+## Link do Site: 
+[Link para o site](projeto-verdigis.onrender.com)
 
 ### Screencast de explicação do código Django
 [Link para o vídeo](https://youtu.be/i5UEh5MteiA)
+
+## Screencast do Deployment
+
+## Quadro da 2º Sprint
+
+
 
 ## Entrega 03:
 
