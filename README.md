@@ -80,19 +80,19 @@ A régua de decisão do mercado mudou radicalmente nos últimos anos:
 
 ## Entrega 02:
 
-## Quadro do 2º Sprint
+### Quadro do 2º Sprint
 ![Print do Quadro de sprints](sprint/Sprint2.jpeg)
 
-## Link do Site: 
+### Link do Site: 
 [Link para o site](https://projeto-verdigis.onrender.com)
 
 ### Screencast de explicação do código Django
-[Link para o vídeo](https://youtu.be/i5UEh5MteiA)
+[Link para o vídeo](https://youtu.be/IaMJn3oHWg4)
 
-## Screencast do Deployment
+### Screencast do Deployment
+[Link para o vídeo](https://youtu.be/w_VHeL16tqk)
 
-
-## Issue/Bug Tracker
+### Issue/Bug Tracker
 ![Print do Bug Tracker](sprint/issue.jpeg)
 
 ## Entrega 03:
