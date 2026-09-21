@@ -92,6 +92,8 @@ A régua de decisão do mercado mudou radicalmente nos últimos anos:
 ## Screencast do Deployment
 
 
+## Issue/Bug Tracker
+![Print do Bug Tracker](sprint/issue.jpeg)
 
 ## Entrega 03:
 
