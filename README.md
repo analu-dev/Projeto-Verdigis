@@ -88,9 +88,11 @@ A régua de decisão do mercado mudou radicalmente nos últimos anos:
 
 ### Screencast de explicação do código Django
 [Link para o vídeo](https://youtu.be/IaMJn3oHWg4)
+(Legendas disponíveis no YouTube)
 
 ### Screencast do Deployment
 [Link para o vídeo](https://youtu.be/w_VHeL16tqk)
+(Legendas disponíveis no YouTube)
 
 ### Issue/Bug Tracker
 ![Print do Bug Tracker](sprint/issue.jpeg)
