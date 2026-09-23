@@ -1,7 +1,7 @@
 :root {
     --primary-color: #778d44;
     --secondary-color: #E8F5E9;
-    --text-color: #525fa2;
+    --text-color: #333;
     --bg-color: #f4f7f6;
 }
 
@@ -55,8 +55,6 @@ nav {
 .nav-links a:hover {
     opacity: 0.8;
     text-decoration: underline;
-    transform: scale(1.05);
-    transition: transform .2s ease, background .2s ease, color .2s
 }
 
 main {
@@ -69,7 +67,7 @@ main {
 }
 
 footer {
-    background-color: #525fa2;
+    background-color: #222;
     color: white;
     text-align: center;
     padding: 1rem;
@@ -96,14 +94,6 @@ footer {
 .secao-conteudo h2 {
     color: var(--primary-color);
     margin-top: 0;
-}
-
-.secao-conteudo h1 {
-    color: var(--primary-color);
-}
-
-.secao-conteudo h3 {
-    color: var(--primary-color);
 }
 
 .pilares-grid {
@@ -212,38 +202,21 @@ footer {
 
 button {
     background-color: #778d44;
+    color: white;
     border: none;
-    border-radius: 24px;
+    border-radius: 5%;
     font-weight: 700;
-    size: 1rem;
-    padding: 12px 24px;
 }
-
 button:hover {
     background: #95b154;
+    color: black;
     transform: scale(1.05);
     transition: transform .2s ease, background .2s ease, color .2s ease;
 
 }
-
 button a {
-    color: white;
     text-decoration: none;
     display: block;
     width: 100%;
     height: 100%;
-}
-
-.desc-index {
-    color: #778d44;
-}
-
-.membros-lista a{
-    text-decoration: none;
-    color: var(--primary-color);
-}
-
-.membros-lista a:hover {
-    text-decoration: underline;
-    color: #95b154;
 }
