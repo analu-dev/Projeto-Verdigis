@@ -1,13 +1,13 @@
 :root {
     --primary-color: #778d44;
-    --secondary-color: #E8F5E9;
+    --secondary-color: #E8E9E6;
     --text-color: #525fa2;
     --bg-color: #f4f7f6;
 }
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "helvetica-neue-lt-pro", sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     display: flex;
@@ -31,10 +31,21 @@ nav {
 }
 
 .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem;
+    font-family: "helvetica-neue-lt-pro-cond", sans-serif;
+    font-size: 2.8rem;
+    font-weight: 700;
     text-decoration: none;
-    color: white;
+    letter-spacing: -0.065em;
+    color: #e8e9e6;
+}
+
+.logo-img {
+    height: 35px;
+    width: auto;
+    object-fit: contain;
 }
 
 .nav-links {
@@ -184,6 +195,7 @@ footer {
     border-radius: 4px;
     font-size: 1rem;
     font-family: inherit;
+
 }
 
 .form-group input:focus,
