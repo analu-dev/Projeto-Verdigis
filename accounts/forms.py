@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
+from accounts.models import UserProfile
+
 User = get_user_model()
 
 
@@ -58,3 +60,23 @@ class DeleteAccountForm(forms.Form):
         if not self.user.check_password(password):
             raise forms.ValidationError('Senha incorreta.')
         return password
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['name', 'cnpj', 'email', 'profile_picture']
+        labels = {
+            'name': 'Nome',
+            'cnpj': 'CNPJ',
+            'email': 'E-mail',
+            'profile_picture': 'Foto de Perfil'
+        }
+
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
+            'cnpj': forms.TextInput(attrs={'placeholder': 'Digite seu CNPJ'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'Digite seu e-mail'}),
+            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
+        }
+
+    
