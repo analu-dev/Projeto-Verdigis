@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.templatetags.static import static
 
 # Create your models here.
 
@@ -12,9 +13,17 @@ class UserProfile(models.Model):
     bio = models.TextField(blank=True)
 
     @property
-    def avatar(self):
-        return self.profile_picture
+    def avatar_url(self):
+        if self.profile_picture:
+            return self.profile_picture.url
+        return static('img/default-avatar.png')
 
     def __str__(self):
         return f"Perfil de {self.user.username}"
+
+    user = models.OneToOneField(
+    settings.AUTH_USER_MODEL,
+    on_delete=models.CASCADE,
+    related_name='profile',
+    )
     
