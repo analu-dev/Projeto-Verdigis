@@ -5,7 +5,8 @@ from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
-from .forms import DeleteAccountForm, LoginForm, SignupForm
+from .forms import DeleteAccountForm, LoginForm, ProfileForm, SignupForm
+from .models import UserProfile
 
 
 def _dados_post(request):
@@ -62,3 +63,14 @@ def delete(request):
         return redirect(settings.LOGOUT_REDIRECT_URL)
 
     return render(request, 'accounts/delete.html', {'form': form})
+
+@login_required
+def profile(request):
+    profile_obj, _ = UserProfile.objects.get_or_create(user=request.user)
+    form = ProfileForm(request.POST or None, request.FILES or None, instance=profile_obj)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, 'Perfil atualizado com sucesso.')
+        return redirect('profile')
+
+    return render(request, 'accounts/profile.html', {'form': form})
