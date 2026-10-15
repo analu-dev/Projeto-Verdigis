@@ -232,6 +232,10 @@ footer {
     box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
 }
 
+.form-group select {
+    color: var(--text-color);
+}
+
 .btn-submit {
     background-color: var(--primary-color);
     color: white;
@@ -291,6 +295,47 @@ textarea::placeholder {
     opacity: 0.6;
 }
 
+.profile-card { 
+    max-width: 640px; 
+    margin: 2rem auto; 
+    padding: 1.5rem; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+}
+
+.profile-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 1rem; 
+    margin-bottom: 1.5rem; 
+}
+
+.profile-avatar {
+    width: 96px; 
+    height: 96px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    background: #eee; 
+}
+
+.profile-info dt {
+    font-weight: bold;
+}
+
+.profile-info dd {
+    margin: 0 0 .75rem 0;
+}
+
+@media (max-width: 768px) {
+  .logo-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+}
+
 .bloco-tipo {
     display: flex;
     flex-direction: column;
@@ -298,5 +343,5 @@ textarea::placeholder {
 }
 
 [hidden] {
-    display: none !important;
+    display: none;
 }
