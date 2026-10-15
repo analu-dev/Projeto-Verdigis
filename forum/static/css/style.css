@@ -290,3 +290,13 @@ textarea::placeholder {
     color: #999;
     opacity: 0.6;
 }
+
+.bloco-tipo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+[hidden] {
+    display: none !important;
+}
