@@ -5,6 +5,14 @@ from django.templatetags.static import static
 # Create your models here.
 
 class UserProfile(models.Model):
+    TIPO_CHOICES = [
+        ('funcionario', 'Funcionário'),
+        ('empresa', 'Empresa'),
+    ]
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    tipo = models.CharField(max_length=12, choices=TIPO_CHOICES, default='funcionario')
+    nome_empresa = models.CharField(max_length=150, blank=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=150, blank=True)
     cnpj = models.CharField(max_length=18, blank=True)

@@ -25,10 +25,12 @@
                         <a href="{% url 'profile' %}">
                             <img class="profile-avatar-nav" src="{{ user.profile.avatar_url }}" alt="Avatar de {{ user.username }}">
                         </a>
-                    {% else %}
-                        <a href="{% url 'login' %}">Entrar</a>
                     {% endif %}
                 </li>
+                {% else %}
+                    <a href="{% url 'login' %}">
+                        <img class="profile-avatar-nav" src="{% static 'img/default-avatar.png' %}" alt="avatar padrão">
+                    </a>
                 {% endif %}
             </ul>
         </nav>
