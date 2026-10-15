@@ -7,11 +7,7 @@
 
 <section class="profile-card">
   <div class="profile-header">
-    {% if user.profile.avatar %}
-      <img class="profile-avatar" src="{{ user.profile.avatar.url }}" alt="Avatar de {{ user.username }}">
-    {% else %}
-      <img class="profile-avatar" src="{% static 'img/logo.png' %}" alt="Avatar padrão">
-    {% endif %}
+    <img class="profile-avatar" src="{{ user.profile.avatar_url }}" alt="Avatar de {{ user.username }}">
     <div>
       <h1>{{ user.get_full_name|default:user.username }}</h1>
       <p>{{ user.username }}</p>
