@@ -2,17 +2,24 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
-from accounts.models import UserProfile
-
+from accounts.models import UserProfile, validar_cpf
+#adicionei o campo para checar se o CPF é válido
 User = get_user_model()
 
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField(label='E-mail')
-
+    # Novos campos adicionados ao cadastro do usuário:
+    # CPF, CNPJ, número de telefone e identificação de funcionário.
+    cpf = forms.CharField(label='CPF', max_length=14, required=True)
+    cnpj = forms.CharField(label='CNPJ', max_length=18, required=False)
+    telefone = forms.CharField(label='Número de Telefone', max_length=20, required=True)
+    funcionario = forms.BooleanField(label='Sou funcionário da empresa', required=False)
+    
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('username', 'email')
+        # Inclusão dos novos campos no formulário de cadastro.
+        fields = ('username', 'email', 'cpf', 'cnpj', 'telefone', 'funcionario')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
