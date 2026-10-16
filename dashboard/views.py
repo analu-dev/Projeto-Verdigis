@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from .models import Meta
 from .forms import FormsMetas
+from django.shortcuts import render
+from django.db.models import Count
+from .models import RelatoSocialVerdigis
 
 
 
@@ -64,3 +67,24 @@ def deletar_meta_view(request, meta_id):
     meta.delete()
     return redirect('dashboard:fabrica_metas')
 
+def dashboard_social_verdigis(request):
+    
+    filtro_sentimento = request.GET.get('sentimento')
+    relatos = RelatoSocialVerdigis.objects.all()
+    
+    if filtro_sentimento:
+        relatos = relatos.filter(sentimento=filtro_sentimento)
+
+    metricas_por_tema = relatos.values('tema_esg').annotate(
+        total_relatos=Count('id')
+    ).order_by('-total_relatos')
+
+    alertas_criticos = RelatoSocialVerdigis.objects.filter(sentimento='NEGATIVO').count()
+
+    context = {
+        'relatos': relatos,
+        'metricas_por_tema': metricas_por_tema,
+        'alertas_criticos': alertas_criticos,
+    }
+    
+    return render(request, 'dashboard/avaliacao.html', context)
