@@ -51,7 +51,7 @@ class RelatoSocialVerdigis(models.Model):
     
     eh_anonimo = models.BooleanField(default=True)
 
-    class Meta:
+    class Tipo:
         verbose_name = "Relato Social ESG"
         verbose_name_plural = "Relatos Sociais ESG"
 
