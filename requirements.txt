@@ -7,3 +7,4 @@ dj-database-url
 Pillow
 psycopg2-binary
 whitenoise==6.12.0
+requests
