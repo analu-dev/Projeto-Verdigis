@@ -1,5 +1,5 @@
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 
 #fabrica de metas!!
 class Meta(models.Model):
@@ -15,7 +15,9 @@ class Meta(models.Model):
         ('ALTA', 'Alta')
     ]
 
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='metas')
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='metas'
+    )
     nome = models.CharField(max_length=255)
     tipo_esg = models.CharField(max_length=1, choices=ESG_ESCOLHA)
     deadline = models.DateField()
@@ -51,7 +53,7 @@ class RelatoSocialVerdigis(models.Model):
     
     eh_anonimo = models.BooleanField(default=True)
 
-    class Tipo:
+    class Meta:
         verbose_name = "Relato Social ESG"
         verbose_name_plural = "Relatos Sociais ESG"
 

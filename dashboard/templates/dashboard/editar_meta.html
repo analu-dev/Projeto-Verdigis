@@ -1,0 +1,5 @@
+{% comment %}
+  Edição de meta (view editar_meta_view). Exige login; meta de outro usuário dá 404.
+  Métodos: GET (formulário preenchido) e POST (salva e volta para a lista).
+  Contexto: form (FormsMetas) e meta. Use {% csrf_token %} e envie para {% url 'dashboard:editar_meta' meta.id %}.
+{% endcomment %}

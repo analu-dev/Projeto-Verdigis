@@ -1,0 +1,8 @@
+{% comment %}
+  Fábrica de metas (view fabrica_metas_view). Exige login. Métodos: GET e POST (cria meta).
+  Contexto: form (FormsMetas) e metas (metas do usuário logado, pendentes primeiro).
+  Todo formulário POST precisa de {% csrf_token %}.
+  Por meta: editar (GET) em {% url 'dashboard:editar_meta' meta.id %};
+  concluir/reabrir e excluir são somente POST em
+  {% url 'dashboard:alternar_conclusao' meta.id %} e {% url 'dashboard:deletar_meta' meta.id %}.
+{% endcomment %}
