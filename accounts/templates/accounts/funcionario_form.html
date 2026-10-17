@@ -1,0 +1,10 @@
+{% comment %}
+  Cadastro e login de funcionário (views signup_funcionario e login_funcionario).
+  Usa a mesma página nas duas rotas, por isso o contexto traz:
+    form     -> formulário (percorra com {% for field in form %}); erros em form.non_field_errors e field.errors
+    titulo, subtitulo, botao -> textos da página e do botão de envio
+    alt_url  -> nome da rota alternativa (link "já tenho conta" / "quero me cadastrar", use {% url alt_url %})
+  Método POST com {% csrf_token %}, enviando para a mesma URL.
+  Cadastro: username, e-mail, senhas, CPF, telefone, CNPJ e senha da empresa.
+  Após 5 falhas de credencial da empresa a view responde 429 com esta mesma página.
+{% endcomment %}

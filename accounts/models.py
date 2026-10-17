@@ -6,7 +6,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.templatetags.static import static
 
-from .validators import validate_cnpj
+from .validators import validate_cnpj, validate_cpf
 
 
 class UserProfile(models.Model):
@@ -27,6 +27,17 @@ class UserProfile(models.Model):
     email = models.EmailField(blank=True)
     profile_picture = models.ImageField(upload_to='avatars/', blank=True, null=True)
     bio = models.TextField(blank=True)
+    cpf = models.CharField(max_length=11, blank=True, validators=[validate_cpf])
+    telefone = models.CharField(max_length=11, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['cpf'],
+                condition=~models.Q(cpf=''),
+                name='accounts_userprofile_cpf_unico',
+            ),
+        ]
 
     @property
     def avatar_url(self):

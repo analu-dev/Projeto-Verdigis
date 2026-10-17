@@ -1,17 +1,20 @@
+import hashlib
+
 import requests
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.db import DatabaseError, transaction
+from django.core.exceptions import NON_FIELD_ERRORS
+from django.db import DatabaseError, IntegrityError, transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_GET, require_POST
 
 from .forms import (
-    CompanyForm, DeleteAccountForm, EmployeeLoginForm, EmployeeSignupForm,
-    LoginForm, ProfileForm, SignupForm,
+    CODIGO_CREDENCIAL_EMPRESA, CompanyForm, DeleteAccountForm, EmployeeLoginForm,
+    EmployeeSignupForm, LoginForm, ProfileForm, SignupForm, _normalizar_cnpj,
 )
 from .models import Funcionario, Niche, UserProfile
 
@@ -20,16 +23,26 @@ def _dados_post(request):
     return request.POST if request.method == 'POST' else None
 
 
+def _salvar_cadastro(form):
+    try:
+        with transaction.atomic():
+            return form.save()
+    except IntegrityError:
+        form.add_error(None, 'Não foi possível concluir o cadastro. Verifique os dados e tente novamente.')
+        return None
+
+
 def signup(request):
     if request.user.is_authenticated:
         return redirect(settings.LOGIN_REDIRECT_URL)
 
     form = SignupForm(_dados_post(request))
     if form.is_valid():
-        user = form.save()
-        auth.login(request, user)
-        messages.success(request, 'Conta criada com sucesso.')
-        return redirect(settings.LOGIN_REDIRECT_URL)
+        user = _salvar_cadastro(form)
+        if user is not None:
+            auth.login(request, user)
+            messages.success(request, 'Conta criada com sucesso.')
+            return redirect(settings.LOGIN_REDIRECT_URL)
 
     return render(request, 'accounts/signup.html', {'form': form})
 
@@ -151,17 +164,36 @@ def buscar_cep(request, cep):
 
 # ---------- Funcionários ----------
 
+LIMITE_TENTATIVAS = 5
+JANELA_TENTATIVAS = 15 * 60
+
+
 def _chave_tentativas(request, escopo):
-    return f"{escopo}:{request.META.get('REMOTE_ADDR', '')}"
+    cnpj = _normalizar_cnpj(request.POST.get('cnpj'))
+    if not cnpj:
+        return None
+    return f"tentativas:{escopo}:{hashlib.sha256(cnpj.encode()).hexdigest()}"
 
 
 def _bloqueado(request, escopo):
-    return cache.get(_chave_tentativas(request, escopo), 0) >= 5
-
-
-def _registrar_falha(request, escopo):
     chave = _chave_tentativas(request, escopo)
-    cache.set(chave, cache.get(chave, 0) + 1, 900)  # 15 minutos
+    return chave is not None and cache.get(chave, 0) >= LIMITE_TENTATIVAS
+
+
+def _registrar_falha(request, escopo, form):
+    chave = _chave_tentativas(request, escopo)
+    if chave is None:
+        return
+    if not any(
+        form.has_error(NON_FIELD_ERRORS, code=codigo)
+        for codigo in (CODIGO_CREDENCIAL_EMPRESA, 'invalid_login')
+    ):
+        return
+    cache.add(chave, 0, JANELA_TENTATIVAS)
+    try:
+        cache.incr(chave)
+    except ValueError:
+        cache.set(chave, 1, JANELA_TENTATIVAS)
 
 
 def signup_funcionario(request):
@@ -178,18 +210,21 @@ def signup_funcionario(request):
 
     if request.method == 'POST' and _bloqueado(request, 'func_signup'):
         messages.error(request, 'Muitas tentativas. Aguarde 15 minutos e tente novamente.')
-        return render(request, 'accounts/funcionario_form.html', {**contexto, 'form': EmployeeSignupForm()})
+        return render(
+            request, 'accounts/funcionario_form.html',
+            {**contexto, 'form': EmployeeSignupForm()}, status=429,
+        )
 
     form = EmployeeSignupForm(_dados_post(request))
     if form.is_valid():
-        with transaction.atomic():
-            user = form.save()
-        auth.login(request, user)
-        messages.success(request, 'Conta de funcionário criada com sucesso.')
-        return redirect(settings.LOGIN_REDIRECT_URL)
+        user = _salvar_cadastro(form)
+        if user is not None:
+            auth.login(request, user)
+            messages.success(request, 'Conta de funcionário criada com sucesso.')
+            return redirect(settings.LOGIN_REDIRECT_URL)
 
     if request.method == 'POST':
-        _registrar_falha(request, 'func_signup')
+        _registrar_falha(request, 'func_signup', form)
     return render(request, 'accounts/funcionario_form.html', {**contexto, 'form': form})
 
 
@@ -207,7 +242,10 @@ def login_funcionario(request):
 
     if request.method == 'POST' and _bloqueado(request, 'func_login'):
         messages.error(request, 'Muitas tentativas. Aguarde 15 minutos e tente novamente.')
-        return render(request, 'accounts/funcionario_form.html', {**contexto, 'form': EmployeeLoginForm(request)})
+        return render(
+            request, 'accounts/funcionario_form.html',
+            {**contexto, 'form': EmployeeLoginForm(request)}, status=429,
+        )
 
     form = EmployeeLoginForm(request, data=_dados_post(request))
     if form.is_valid():
@@ -216,5 +254,5 @@ def login_funcionario(request):
         return redirect(settings.LOGIN_REDIRECT_URL)
 
     if request.method == 'POST':
-        _registrar_falha(request, 'func_login')
+        _registrar_falha(request, 'func_login', form)
     return render(request, 'accounts/funcionario_form.html', {**contexto, 'form': form})

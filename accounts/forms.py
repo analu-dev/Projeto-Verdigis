@@ -1,12 +1,17 @@
 import re
 from django import forms
-from .models import Company 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.core.files.uploadedfile import UploadedFile
 
-from accounts.models import UserProfile
+from accounts.models import Company, Funcionario, UserProfile
+from accounts.validators import validate_cnpj, validate_cpf
 
 User = get_user_model()
+
+TAMANHO_MAX_AVATAR = 2 * 1024 * 1024
+
+CODIGO_CREDENCIAL_EMPRESA = 'credencial_empresa'
 
 
 def _normalizar_cnpj(valor):
@@ -39,6 +44,39 @@ class SignupForm(UserCreationForm):
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError('Já existe uma conta cadastrada com este e-mail.')
         return email
+
+    def clean_cpf(self):
+        cpf = re.sub(r'\D', '', self.cleaned_data['cpf'])
+        validate_cpf(cpf)
+        if UserProfile.objects.filter(cpf=cpf).exists():
+            raise forms.ValidationError('Já existe uma conta cadastrada com este CPF.')
+        return cpf
+
+    def clean_cnpj(self):
+        cnpj = _normalizar_cnpj(self.cleaned_data.get('cnpj'))
+        if cnpj:
+            validate_cnpj(cnpj)
+        return cnpj
+
+    def clean_telefone(self):
+        telefone = re.sub(r'\D', '', self.cleaned_data['telefone'])
+        if len(telefone) not in (10, 11):
+            raise forms.ValidationError('Telefone inválido. Informe DDD e número.')
+        return telefone
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        if commit:
+            UserProfile.objects.update_or_create(
+                user=user,
+                defaults={
+                    'cpf': self.cleaned_data['cpf'],
+                    'telefone': self.cleaned_data['telefone'],
+                    'cnpj': self.cleaned_data.get('cnpj', ''),
+                    'email': user.email,
+                },
+            )
+        return user
 
 
 class LoginForm(AuthenticationForm):
@@ -88,6 +126,18 @@ class ProfileForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'placeholder': 'Digite seu e-mail'}),
             'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
         }
+
+    def clean_cnpj(self):
+        cnpj = _normalizar_cnpj(self.cleaned_data.get('cnpj'))
+        if cnpj:
+            validate_cnpj(cnpj)
+        return cnpj
+
+    def clean_profile_picture(self):
+        foto = self.cleaned_data.get('profile_picture')
+        if isinstance(foto, UploadedFile) and foto.size > TAMANHO_MAX_AVATAR:
+            raise forms.ValidationError('A imagem deve ter no máximo 2 MB.')
+        return foto
 
 
 class CompanyForm(forms.ModelForm):
@@ -161,7 +211,9 @@ class EmployeeSignupForm(SignupForm):
         if cnpj and senha:
             company = Company.objects.filter(cnpj=cnpj).first()
             if not company or not company.check_senha_acesso(senha):
-                raise forms.ValidationError('CNPJ ou senha da empresa inválidos.')
+                raise forms.ValidationError(
+                    'CNPJ ou senha da empresa inválidos.', code=CODIGO_CREDENCIAL_EMPRESA
+                )
             self.company = company
         return cleaned
 
@@ -174,6 +226,7 @@ class EmployeeSignupForm(SignupForm):
                 'tipo': 'funcionario',
                 'nome_empresa': self.company.nome_fantasia,
                 'email': user.email,
+                'cnpj': '',
             },
         )
         return user
@@ -205,5 +258,7 @@ class EmployeeLoginForm(LoginForm):
                 or vinculo.company.cnpj != cnpj
                 or not vinculo.company.check_senha_acesso(senha)
             ):
-                raise forms.ValidationError('Dados de acesso da empresa inválidos.')
+                raise forms.ValidationError(
+                    'Dados de acesso da empresa inválidos.', code=CODIGO_CREDENCIAL_EMPRESA
+                )
         return cleaned

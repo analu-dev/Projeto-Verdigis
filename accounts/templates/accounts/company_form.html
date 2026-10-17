@@ -1,0 +1,7 @@
+{% comment %}
+  Cadastro de empresa (view company_register). Exige login.
+  Métodos: GET (exibe) e POST (envia, com {% csrf_token %} e enctype se houver upload).
+  Contexto: form (campos da empresa, com erros em field.errors) e niche_info
+  (dados dos nichos, disponíveis em JSON via {{ niche_info|json_script:"niche-info" }}).
+  Sucesso: redireciona para a página de sucesso.
+{% endcomment %}
