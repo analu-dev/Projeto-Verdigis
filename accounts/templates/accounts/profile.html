@@ -41,5 +41,8 @@
   {% endif %}
 </dl>
   <button class="btn-submit">Editar Perfil</button>
+  <form method="get" action="{% url 'delete' %}" class="form-excluir">
+    <button type="submit" class="btn-submit btn-excluir">Excluir conta</button>
+  </form>
 </section>
 {% endblock content %}

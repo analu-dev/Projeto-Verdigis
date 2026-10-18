@@ -36,6 +36,9 @@ class SignupForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['placeholder'] = 'Digite seu nome de usuário'
         self.fields['email'].widget.attrs['placeholder'] = 'seuemail@exemplo.com'
+        self.fields['cpf'].widget.attrs['placeholder'] = '000.000.000-00'
+        self.fields['cnpj'].widget.attrs['placeholder'] = '00.000.000/0000-00'
+        self.fields['telefone'].widget.attrs['placeholder'] = '(81) 99999-8888'
         self.fields['password1'].widget.attrs['placeholder'] = 'Crie uma senha'
         self.fields['password2'].widget.attrs['placeholder'] = 'Repita a senha'
 
@@ -159,13 +162,23 @@ class CompanyForm(forms.ModelForm):
             'razao_social': 'Razão Social da empresa',
             'nome_fantasia': 'Nome Fantasia',
             'cnpj': '00.000.000/0000-00',
+            'inscricao_estadual': 'Inscrição Estadual (opcional)',
+            'inscricao_municipal': 'Inscrição Municipal (opcional)',
             'cep': '00000-000',
+            'logradouro': 'Rua, avenida, travessa...',
+            'numero': 'Número',
+            'complemento': 'Sala, bloco, andar (opcional)',
+            'bairro': 'Bairro',
+            'cidade': 'Cidade',
+            'uf': 'UF',
             'email_corporativo': 'contato@empresa.com.br',
-            'telefone_fixo': '(81) 3333-4444',
-            'celular_whatsapp': '(81) 99999-8888',
+            'telefone_fixo': '(00) 3333-4444',
+            'celular_whatsapp': '(00) 99999-8888',
+            'senha_funcionarios': 'Senha para seus funcionários acessarem',
         }
         for name, text in placeholders.items():
             self.fields[name].widget.attrs['placeholder'] = text
+            self.fields['niche'].empty_label = 'Selecione o nicho'
         for field in self.fields.values():
             field.widget.attrs.setdefault('class', 'form-control')
 

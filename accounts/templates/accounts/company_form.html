@@ -1,7 +1,28 @@
-{% comment %}
-  Cadastro de empresa (view company_register). Exige login.
-  Métodos: GET (exibe) e POST (envia, com {% csrf_token %} e enctype se houver upload).
-  Contexto: form (campos da empresa, com erros em field.errors) e niche_info
-  (dados dos nichos, disponíveis em JSON via {{ niche_info|json_script:"niche-info" }}).
-  Sucesso: redireciona para a página de sucesso.
-{% endcomment %}
+{% extends "forum/base.html" %}
+
+{% block title %}Cadastrar empresa - Verdigis{% endblock %}
+
+{% block content %}
+<section class="secao-form">
+    <h1>CADASTRAR EMPRESA</h1>
+    <p>Você será o responsável por esta empresa na plataforma.</p>
+
+    <form method="post" action="{% url 'company_register' %}" class="form-contato">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-error" role="alert">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            {% include 'accounts/_campo.html' with field=field %}
+        {% endfor %}
+
+        <button type="submit" class="btn-submit">Cadastrar empresa</button>
+    </form>
+</section>
+{% endblock %}
