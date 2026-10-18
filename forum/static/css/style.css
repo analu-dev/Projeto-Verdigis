@@ -363,6 +363,50 @@ textarea::placeholder {
     gap: 1.2rem;
 }
 
-[hidden] {
-    display: none;
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.seletor-tipo {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1.2rem 0 1.5rem;
+    padding: 0.3rem;
+    background: var(--secondary-color);
+    border-radius: 8px;
+}
+
+.secao-form .seletor-opcao {
+    flex: 1;
+    text-align: center;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #444;
+    text-decoration: none;
+}
+
+.secao-form .seletor-opcao:hover {
+    background: white;
+    text-decoration: none;
+    color: #444;
+}
+
+.secao-form .seletor-opcao.ativo {
+    background: var(--primary-color);
+    color: white;
+}
+
+.form-excluir {
+    margin-top: 0.1rem;
+}
+
+.btn-excluir {
+    background-color: #c0392b;
+}
+
+.btn-excluir:hover {
+    background-color: #a93226;
 }
