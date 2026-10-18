@@ -18,4 +18,7 @@ urlpatterns = [
     
     # Rota para deletar uma meta
     path('metas/<int:meta_id>/deletar/', views.deletar_meta_view, name='deletar_meta'),
+
+    # Rota para avaliações
+    path('avaliacao/', views.dashboard_social_verdigis, name='dashboard_social'),
 ]
