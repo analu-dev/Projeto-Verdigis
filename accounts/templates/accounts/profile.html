@@ -41,6 +41,7 @@
   {% endif %}
 </dl>
   <button class="btn-submit">Editar Perfil</button>
+  <button class="btn-submit btn-logout" onclick="window.location.href='{% url 'logout' %}'">Sair</button>
   <form method="get" action="{% url 'delete' %}" class="form-excluir">
     <button type="submit" class="btn-submit btn-excluir">Excluir conta</button>
   </form>

@@ -21,4 +21,6 @@ urlpatterns = [
 
     # Rota para avaliações
     path('avaliacao/', views.dashboard_social_verdigis, name='dashboard_social'),
+
+    path('avaliacao/<int:relato_id>/', views.detalhe_relato_view, name='detalhe_relato'),
 ]
