@@ -25,4 +25,25 @@
         <button type="submit" class="btn-submit">Cadastrar empresa</button>
     </form>
 </section>
+<script>
+    const campoCep = document.getElementById('id_cep');
+
+    campoCep.addEventListener('blur', function () {
+        const cep = campoCep.value.replace(/\D/g, '');
+        if (cep.length !== 8) {
+            return;
+        }
+        fetch("{% url 'buscar_cep' '00000000' %}".replace('00000000', cep))
+            .then(function (resposta) { return resposta.json(); })
+            .then(function (dados) {
+                if (dados.erro) {
+                    return;
+                }
+                document.getElementById('id_logradouro').value = dados.logradouro;
+                document.getElementById('id_bairro').value = dados.bairro;
+                document.getElementById('id_cidade').value = dados.cidade;
+                document.getElementById('id_uf').value = dados.uf;
+            });
+    });
+</script>
 {% endblock %}
