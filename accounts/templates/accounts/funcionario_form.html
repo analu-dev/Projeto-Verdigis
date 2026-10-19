@@ -1,8 +1,10 @@
 {% extends "forum/base.html" %}
 
 {% block title %}{{ titulo }} - Verdigis{% endblock %}
+{% block fundo %}fundo-3{% endblock %}
 
 {% block content %}
+<div class="moldura-vidro">
 <section class="secao-form">
     <h1>{{ titulo|upper }}</h1>
     <p>{{ subtitulo }}</p>
@@ -35,6 +37,7 @@
 
     <p class="auth-switch"><a href="{% url alt_url %}">{{ alt_texto }}</a></p>
 </section>
+</div>
 {% load static %}
 <script src="{% static 'js/masks.js' %}"></script>
 {% endblock %}

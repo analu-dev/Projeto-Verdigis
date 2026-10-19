@@ -1,8 +1,10 @@
 {% extends 'forum/base.html' %}
 
 {% block title %}Criar Conta - Verdigis{% endblock %}
+{% block fundo %}fundo-1{% endblock %}
 
 {% block content %}
+<div class="moldura-vidro">
 <section class="secao-form">
     <h1>CRIAR CONTA</h1>
     <p>Escolha como você vai usar a plataforma.</p>
@@ -35,6 +37,7 @@
 
     <p class="auth-switch">Já tem uma conta? <a href="{% url 'login' %}">Entrar</a></p>
 </section>
+</div>
 {% load static %}
 <script src="{% static 'js/masks.js' %}"></script>
 {% endblock content %}

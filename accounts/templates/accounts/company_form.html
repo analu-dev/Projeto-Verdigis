@@ -1,8 +1,10 @@
 {% extends "forum/base.html" %}
 
 {% block title %}Cadastrar empresa - Verdigis{% endblock %}
+{% block fundo %}fundo-3{% endblock %}
 
 {% block content %}
+<div class="moldura-vidro">
 <section class="secao-form">
     <h1>CADASTRAR EMPRESA</h1>
     <p>Você será o responsável por esta empresa na plataforma.</p>
@@ -25,6 +27,7 @@
         <button type="submit" class="btn-submit">Cadastrar empresa</button>
     </form>
 </section>
+</div>
 <script>
     const campoCep = document.getElementById('id_cep');
 
