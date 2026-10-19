@@ -36,8 +36,11 @@ class SignupForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['placeholder'] = 'Digite seu nome de usuário'
         self.fields['email'].widget.attrs['placeholder'] = 'seuemail@exemplo.com'
+        self.fields['cpf'].widget.attrs['data-mask'] = 'cpf'
         self.fields['cpf'].widget.attrs['placeholder'] = '000.000.000-00'
+        self.fields['cnpj'].widget.attrs['data-mask'] = 'cnpj'
         self.fields['cnpj'].widget.attrs['placeholder'] = '00.000.000/0000-00'
+        self.fields['telefone'].widget.attrs['data-mask'] = 'telefone'
         self.fields['telefone'].widget.attrs['placeholder'] = '(81) 99999-8888'
         self.fields['password1'].widget.attrs['placeholder'] = 'Crie uma senha'
         self.fields['password2'].widget.attrs['placeholder'] = 'Repita a senha'
@@ -183,7 +186,16 @@ class CompanyForm(forms.ModelForm):
         for nome, text in placeholders.items():
             self.fields[nome].widget.attrs['placeholder'] = text
             self.fields['niche'].empty_label = 'Selecione o nicho'
-            
+
+        mascaras = {
+            'cnpj': 'cnpj',
+            'cep': 'cep',
+            'telefone_fixo': 'telefone',
+            'celular_whatsapp': 'telefone',
+        }
+        for name, mask in mascaras.items():
+            self.fields[name].widget.attrs['data-mask'] = mask
+
         for field in self.fields.values():
             field.widget.attrs.setdefault('class', 'form-control')
 
@@ -219,6 +231,7 @@ class EmployeeSignupForm(SignupForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.company = None
+        self.fields['cnpj'].widget.attrs['data-mask'] = 'cnpj'
         self.fields['cnpj'].widget.attrs['placeholder'] = '00.000.000/0000-00'
         self.fields['senha_empresa'].widget.attrs['placeholder'] = 'Senha fornecida pela empresa'
 
@@ -258,6 +271,7 @@ class EmployeeLoginForm(LoginForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['cnpj'].widget.attrs['data-mask'] = 'cnpj'
         self.fields['cnpj'].widget.attrs['placeholder'] = '00.000.000/0000-00'
         self.fields['senha_empresa'].widget.attrs['placeholder'] = 'Senha fornecida pela empresa'
 
