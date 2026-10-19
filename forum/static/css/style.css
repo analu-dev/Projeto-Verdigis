@@ -1039,3 +1039,15 @@ textarea::placeholder {
     width: 2rem;
     height: 1.4rem;
 }
+
+.moldura-vidro > .secao-pilares {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2rem;
+    background: #fff;
+    border-radius: var(--card-raio);
+}
+
+.moldura-vidro:has(> .secao-pilares) {
+    width: 100%;
+}

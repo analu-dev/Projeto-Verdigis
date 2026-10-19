@@ -21,34 +21,36 @@
     </div>
 {% endif %}
 
-<section class="secao-pilares">
-    <h1>PILARES ESG & PRÁTICAS</h1>
-    <div class="pilares-grid">
-        {% for pilar in pilares %}
-            <div class="pilar-card">
-                <span class="pilar-sigla">{{ pilar.sigla }}</span>
-                <h3>{{ pilar.nome }}</h3>
-                <p>{{ pilar.descricao }}</p>
-                
-                {% if pilar.praticas.all %}
-                    <hr style="border: 0; border-top: 1px solid #eee; margin: 1rem 0;">
-                    <h4>Práticas Associadas:</h4>
-                    <ul class="praticas-lista">
-                        {% for pratica in pilar.praticas.all %}
-                            <li>
-                                <strong>{{ pratica.titulo }}:</strong> 
-                                {{ pratica.descricao }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p><em>Sem práticas registadas para este pilar.</em></p>
-                {% endif %}
-            </div>
-        {% empty %}
-            <p class="pilares-vazio">Ainda não existem pilares ESG registados na plataforma.</p>
-        {% endfor %}
-    </div>
-</section>
+<div class="moldura-vidro">
+    <section class="secao-pilares">
+        <h1>PILARES ESG & PRÁTICAS</h1>
+        <div class="pilares-grid">
+            {% for pilar in pilares %}
+                <div class="pilar-card">
+                    <span class="pilar-sigla">{{ pilar.sigla }}</span>
+                    <h3>{{ pilar.nome }}</h3>
+                    <p>{{ pilar.descricao }}</p>
+                    
+                    {% if pilar.praticas.all %}
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 1rem 0;">
+                        <h4>Práticas Associadas:</h4>
+                        <ul class="praticas-lista">
+                            {% for pratica in pilar.praticas.all %}
+                                <li>
+                                    <strong>{{ pratica.titulo }}:</strong> 
+                                    {{ pratica.descricao }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p><em>Sem práticas registadas para este pilar.</em></p>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="pilares-vazio">Ainda não existem pilares ESG registados na plataforma.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
 
 {% endblock content %}
