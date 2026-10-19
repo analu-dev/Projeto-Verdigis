@@ -7,8 +7,9 @@
 
 {% block title %}Avaliação - Verdigis{% endblock %}
 
+{% block head %}<h1 class="dash-banner">Central de Avaliações</h1>{% endblock head %}
+
 {% block content %}
-  <h1 class="dash-banner">Central de Avaliações</h1>
 
   <article class="av-detalhe av-detalhe--{{ relato.sentimento|lower }}">
     <a class="av-detalhe__voltar" href="{% url 'dashboard:dashboard_social' %}?tema={{ relato.tema_esg }}&sentimento={{ relato.sentimento }}" aria-label="Voltar">←</a>

@@ -42,6 +42,11 @@
     </header>
 
     <main>
+        {% block head %}
+        {% endblock head %}
+
+        {% block messages %}
+        {% endblock messages %}
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}">
