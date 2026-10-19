@@ -275,3 +275,22 @@ class EmployeeLoginForm(LoginForm):
                     'Dados de acesso da empresa inválidos.', code=CODIGO_CREDENCIAL_EMPRESA
                 )
         return cleaned
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['name', 'profile_picture']
+        labels = {
+            'name': 'Nome',
+            'profile_picture': 'Foto de Perfil',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
+            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
+        }
+
+    def clean_profile_picture(self):
+        foto = self.cleaned_data.get('profile_picture')
+        if isinstance(foto, UploadedFile) and foto.size > TAMANHO_MAX_AVATAR:
+            raise forms.ValidationError('A imagem deve ter no máximo 2 MB.')
+        return foto

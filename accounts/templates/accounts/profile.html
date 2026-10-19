@@ -40,7 +40,7 @@
     {% endif %}
   {% endif %}
 </dl>
-  <button class="btn-submit">Editar Perfil</button>
+  <button class="btn-submit"><a href="{% url 'edit_profile' %}">Editar Perfil</a></button>
   <button type="submit" form="form-sair" class="btn-submit btn-logout">Sair</button>
   <form method="get" action="{% url 'delete' %}" class="form-excluir">
     <button type="submit" class="btn-submit btn-excluir">Excluir conta</button>
