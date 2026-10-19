@@ -7,12 +7,13 @@
 {% endcomment %}
 
 {% block title %}Editar meta - Verdigis{% endblock %}
+{% block fundo %}fundo-5{% endblock %}
 
 {% block head %}<h1 class="dash-banner">Editar meta</h1>{% endblock head %}
 
 {% block content %}
 
-
+<div class="moldura-vidro">
   <section class="secao-form">
     <h2>{{ meta.nome }}</h2>
 
@@ -55,4 +56,5 @@
       </div>
     </form>
   </section>
+</div>
 {% endblock %}

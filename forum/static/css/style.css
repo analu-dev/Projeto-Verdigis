@@ -1011,3 +1011,31 @@ textarea::placeholder {
     font-size: 0.78rem;
     text-align: center;
 }
+
+.form-group .campo-senha {
+    position: relative;
+}
+
+.form-group .campo-senha input {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 3rem;
+}
+
+.form-group .campo-senha .btn-olho,
+.form-group .campo-senha .btn-olho:hover {
+    position: absolute;
+    top: 50%;
+    right: 0.6rem;
+    transform: translateY(-50%);
+    padding: 0.2rem 0.4rem;
+    background: none;
+    color: inherit;
+    font-size: 1.1rem;
+}
+
+.form-group .campo-senha .btn-olho img {
+    display: block;
+    width: 2rem;
+    height: 1.4rem;
+}

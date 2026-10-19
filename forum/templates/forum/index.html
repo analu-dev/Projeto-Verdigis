@@ -1,6 +1,7 @@
 {% extends 'forum/base.html' %}
 
 {% block title %}Início - Verdigis{% endblock %}
+{% block fundo %}fundo-1{% endblock %}
 
 {% block content %}
 
@@ -12,10 +13,12 @@
         </section>
     {% endfor %}
 {% else %}
+    <div class="moldura-vidro">
     <section class="secao-conteudo">
         <h1>BEM-VINDO À VERDIGIS</h1>
         <p class="desc-index">A plataforma dedicada à gestão de práticas ESG e sustentabilidade para o setor farmacêutico, trazendo em uma plataforma b2b, alguns processos que auxiliam as empresas a implementar as medidas de ESG, com um esquema de parcerias com outras empresas para facilitar o processo.</p>
     </section>
+    </div>
 {% endif %}
 
 <section class="secao-pilares">

@@ -2,9 +2,10 @@
 {% load static %}
 
 {% block title %}Perfil - Verdigis{% endblock %}
+{% block fundo %}fundo-2{% endblock %}
 
 {% block content %}
-
+<div class="moldura-vidro">
 <section class="profile-card">
   <div class="profile-header">
     <img class="profile-avatar" src="{{ user.profile.avatar_url }}" alt="Avatar de {{ user.username }}">
@@ -49,4 +50,5 @@
     {% csrf_token %}
   </form>  
 </section>
+</div>
 {% endblock content %}

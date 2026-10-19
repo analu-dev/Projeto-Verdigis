@@ -1,8 +1,10 @@
 {% extends "forum/base.html" %}
 
 {% block title %}Entrar - Verdigis{% endblock %}
+{% block fundo %}fundo-1{% endblock %}
 
 {% block content %}
+<div class="moldura-vidro">
 <section class="secao-form">
     <h1>ENTRAR</h1>
     <p>Escolha como você entra na plataforma.</p>
@@ -32,4 +34,5 @@
 
     <p class="auth-switch">Ainda não tem conta? <a href="{% url 'signup' %}">Criar conta</a></p>
 </section>
+</div>
 {% endblock %}
