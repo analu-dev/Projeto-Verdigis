@@ -7,10 +7,16 @@ from .forms import FormsMetas
 from .models import Meta, RelatoSocialVerdigis
 
 
+from django.utils import timezone
+
 @login_required
 def home(request):
-    """Página inicial da área logada. Acesso restrito a usuários autenticados."""
-    return render(request, 'dashboard/dashboard.html')
+    metas = Meta.objects.filter(usuario=request.user)
+    return render(request, 'dashboard/dashboard.html', {
+        'metas_atrasadas': metas.filter(completo=False, deadline__lt=timezone.localdate()).count(),
+        'metas_concluidas': metas.filter(completo=True).count(),
+    })
+
 
 
 #Fabrica de metas
@@ -31,6 +37,7 @@ def fabrica_metas_view(request):
     return render(request, 'dashboard/fabrica_metas.html', {
         'metas': metas,
         'form': form,
+        'hoje': timezone.localdate(),
     })
 
 
@@ -72,22 +79,37 @@ def deletar_meta_view(request, meta_id):
 
 @login_required
 def dashboard_social_verdigis(request):
-    filtro_sentimento = request.GET.get('sentimento')
-    relatos = RelatoSocialVerdigis.objects.order_by('-data_registro')
+    tema = request.GET.get('tema', '')
+    sentimento = request.GET.get('sentimento', 'NEGATIVO')
+    if sentimento not in ('POSITIVO', 'NEGATIVO', 'NEUTRO'):
+        sentimento = 'NEGATIVO'
 
-    if filtro_sentimento:
-        relatos = relatos.filter(sentimento=filtro_sentimento)
-
-    metricas_por_tema = relatos.order_by().values('tema_esg').annotate(
-        total_relatos=Count('id')
-    ).order_by('-total_relatos')
-
-    alertas_criticos = RelatoSocialVerdigis.objects.filter(sentimento='NEGATIVO').count()
-
-    context = {
-        'relatos': relatos,
-        'metricas_por_tema': metricas_por_tema,
-        'alertas_criticos': alertas_criticos,
+    contagem = {
+        m['tema_esg']: m['total']
+        for m in RelatoSocialVerdigis.objects.values('tema_esg').annotate(total=Count('id'))
     }
+    nomes = dict(RelatoSocialVerdigis.TEMA_ESG_CHOICES)
+    temas = [
+        {'codigo': codigo, 'nome': nome, 'total': contagem.get(codigo, 0)}
+        for codigo, nome in RelatoSocialVerdigis.TEMA_ESG_CHOICES
+    ]
 
-    return render(request, 'dashboard/avaliacao.html', context)
+    relatos = RelatoSocialVerdigis.objects.filter(sentimento=sentimento).order_by('-data_registro')
+    if tema in nomes:
+        relatos = relatos.filter(tema_esg=tema)
+    else:
+        tema = ''
+
+    return render(request, 'dashboard/avaliacao.html', {
+        'relatos': relatos,
+        'temas': temas,
+        'tema_atual': tema,
+        'tema_atual_nome': nomes.get(tema, ''),
+        'sentimento_atual': sentimento,
+    })
+
+
+@login_required
+def detalhe_relato_view(request, relato_id):
+    relato = get_object_or_404(RelatoSocialVerdigis, id=relato_id)
+    return render(request, 'dashboard/avaliacao_detalhe.html', {'relato': relato})

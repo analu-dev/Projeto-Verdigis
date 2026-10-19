@@ -115,6 +115,7 @@ Configure `SECRET_KEY`, `ENVIRONMENT` e `DATABASE_URL` como variáveis de ambien
 ├── verdigis/       
 ├── forum/          
 ├── accounts/
+├── dashboard/
 ├── docs/           
 ├── build.sh        
 ├── manage.py

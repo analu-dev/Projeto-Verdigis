@@ -1,5 +1,58 @@
+{% extends "forum/base.html" %}
+
 {% comment %}
   Edição de meta (view editar_meta_view). Exige login; meta de outro usuário dá 404.
   Métodos: GET (formulário preenchido) e POST (salva e volta para a lista).
   Contexto: form (FormsMetas) e meta. Use {% csrf_token %} e envie para {% url 'dashboard:editar_meta' meta.id %}.
 {% endcomment %}
+
+{% block title %}Editar meta - Verdigis{% endblock %}
+
+{% block head %}<h1 class="dash-banner">Editar meta</h1>{% endblock head %}
+
+{% block content %}
+
+
+  <section class="secao-form">
+    <h2>{{ meta.nome }}</h2>
+
+    <form method="post" action="{% url 'dashboard:editar_meta' meta.id %}" class="form-contato">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="fm-esg" role="radiogroup" aria-label="Pilar ESG">
+        <input type="radio" name="tipo_esg" id="esg-E" value="E" required {% if form.tipo_esg.value == 'E' %}checked{% endif %}>
+        <label for="esg-E" title="Ambiental">E</label>
+
+        <input type="radio" name="tipo_esg" id="esg-S" value="S" {% if form.tipo_esg.value == 'S' %}checked{% endif %}>
+        <label for="esg-S" title="Social">S</label>
+
+        <input type="radio" name="tipo_esg" id="esg-G" value="G" {% if form.tipo_esg.value == 'G' %}checked{% endif %}>
+        <label for="esg-G" title="Governança">G</label>
+      </div>
+      {% for erro in form.tipo_esg.errors %}
+        <div class="alert alert-error" role="alert">{{ erro }}</div>
+      {% endfor %}
+
+      {% for campo in form %}
+        {% if campo.name != 'tipo_esg' %}
+          <div class="form-group">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% for erro in campo.errors %}
+              <div class="alert alert-error" role="alert">{{ erro }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <div class="fm-modal__acoes">
+        <button type="submit">Salvar alterações</button>
+        <button type="button" class="fm-cancelar" onclick="location.href='{% url 'dashboard:fabrica_metas' %}'">Cancelar</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}

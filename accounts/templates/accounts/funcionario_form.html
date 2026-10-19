@@ -1,10 +1,38 @@
-{% comment %}
-  Cadastro e login de funcionário (views signup_funcionario e login_funcionario).
-  Usa a mesma página nas duas rotas, por isso o contexto traz:
-    form     -> formulário (percorra com {% for field in form %}); erros em form.non_field_errors e field.errors
-    titulo, subtitulo, botao -> textos da página e do botão de envio
-    alt_url  -> nome da rota alternativa (link "já tenho conta" / "quero me cadastrar", use {% url alt_url %})
-  Método POST com {% csrf_token %}, enviando para a mesma URL.
-  Cadastro: username, e-mail, senhas, CPF, telefone, CNPJ e senha da empresa.
-  Após 5 falhas de credencial da empresa a view responde 429 com esta mesma página.
-{% endcomment %}
+{% extends "forum/base.html" %}
+
+{% block title %}{{ titulo }} - Verdigis{% endblock %}
+
+{% block content %}
+<section class="secao-form">
+    <h1>{{ titulo|upper }}</h1>
+    <p>{{ subtitulo }}</p>
+
+    {% if request.resolver_match.url_name == 'signup_funcionario' %}
+        {% include 'accounts/_seletor_tipo.html' with pagina='signup' ativo='funcionario' %}
+    {% else %}
+        {% include 'accounts/_seletor_tipo.html' with pagina='login' ativo='funcionario' %}
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-error" role="alert">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" class="form-contato">
+        {% csrf_token %}
+
+        {% for field in form %}
+            {% if field.name != 'funcionario' %}
+                {% include 'accounts/_campo.html' with field=field %}
+            {% endif %}
+        {% endfor %}
+
+        <button class="btn-submit" type="submit">{{ botao }}</button>
+    </form>
+
+    <p class="auth-switch"><a href="{% url alt_url %}">{{ alt_texto }}</a></p>
+</section>
+{% endblock %}

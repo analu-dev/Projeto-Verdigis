@@ -1,19 +1,37 @@
 {% extends "forum/base.html" %}
 
 {% comment %}
-  Dashboard (dashboard.views.home) - frontend a ser implementado.
+  Dashboard (dashboard.views.home).
   Exige usuário logado (anônimos são redirecionados para o login).
 
-  URL: {% url 'dashboard' %}  |  Método: GET
-  Contexto: nenhum específico. O objeto `user` (usuário logado) já está disponível
-  em todos os templates.
+  URL: {% url 'dashboard:dashboard' %}  |  Método: GET
+  Contexto: nenhum contexto extra (a view home não envia variáveis).
+  O objeto `user` já está disponível em todos os templates.
   Destino padrão após login e cadastro (settings.LOGIN_REDIRECT_URL).
 {% endcomment %}
 
 {% block title %}Dashboard - Verdigis{% endblock %}
 
+{% block head %}<h1 class="dash-banner">Bem-vindo(a) à página de ESG da sua empresa!</h1>{% endblock head %}
+
 {% block content %}
-  <section class="secao-conteudo">
-    <h1>Bem-vindo(a), {{ user.username }}!</h1>
+ 
+  <section class="dash-corpo">
+    <nav class="dash-menu" aria-label="Menu principal">
+      <a class="dash-botao" href="{% url 'dashboard:dashboard_social' %}">Central de Avaliações</a>
+      <a class="dash-botao" href="{% url 'dashboard:fabrica_metas' %}">Fábrica de metas</a>
+      <a class="dash-botao" href="#">Diagnóstico de compatibilidade</a>
+      <a class="dash-botao" href="#">Práticas da empresa</a>
+      <a class="dash-botao" href="#">Quadro de tarefas</a>
+    </nav>
+ 
+    <aside class="dash-avisos" aria-label="Avisos">
+      {% if metas_concluidas %}
+        <div class="dash-aviso dash-aviso--ok">Nova tarefa concluída!</div>
+      {% endif %}
+      {% if metas_atrasadas %}
+        <div class="dash-aviso dash-aviso--atraso">Atenção, tarefa atrasada!</div>
+      {% endif %}
+    </aside>
   </section>
 {% endblock %}

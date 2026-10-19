@@ -1,8 +1,127 @@
+{% extends "forum/base.html" %}
+
 {% comment %}
   Fábrica de metas (view fabrica_metas_view). Exige login. Métodos: GET e POST (cria meta).
-  Contexto: form (FormsMetas) e metas (metas do usuário logado, pendentes primeiro).
+  Contexto: form (FormsMetas), metas (metas do usuário logado, pendentes primeiro)
+  e hoje (date, usado para marcar metas atrasadas).
   Todo formulário POST precisa de {% csrf_token %}.
   Por meta: editar (GET) em {% url 'dashboard:editar_meta' meta.id %};
   concluir/reabrir e excluir são somente POST em
   {% url 'dashboard:alternar_conclusao' meta.id %} e {% url 'dashboard:deletar_meta' meta.id %}.
+  A criação de meta acontece num <dialog> aberto pelo botão "+".
 {% endcomment %}
+
+{% block title %}Fábrica de Metas - Verdigis{% endblock %}
+
+{% block head %}<h1 class="dash-banner">Fábrica de Metas</h1>{% endblock head %}
+
+{% block content %}
+
+  <section class="dash-corpo">
+
+    <!-- Lista de metas -->
+    <div class="fm-lista">
+      {% for meta in metas %}
+        <article class="fm-card fm-card--{{ meta.prioridade|lower }}{% if meta.completo %} fm-card--concluida{% endif %}">
+          <h3 class="fm-card__titulo">{{ meta.nome }}</h3>
+
+          <div class="fm-card__corpo">
+            <div class="fm-card__tags">
+              <span class="fm-badge" title="{{ meta.get_tipo_esg_display }}">{{ meta.tipo_esg }}</span>
+              <span class="fm-tag">Prazo: {{ meta.deadline|date:"d/m/Y" }}</span>
+              <span class="fm-tag">Prioridade {{ meta.get_prioridade_display|lower }}</span>
+              {% if meta.completo %}
+                <span class="fm-tag fm-tag--ok">Concluída</span>
+              {% elif meta.deadline < hoje %}
+                <span class="fm-tag fm-tag--atraso">Atrasada</span>
+              {% endif %}
+            </div>
+
+            {% for linha in meta.resumo.splitlines %}
+              {% if linha.strip %}
+                <p class="fm-item">{{ linha }}</p>
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <details class="fm-menu">
+            <summary>Editar</summary>
+            <div class="fm-menu__opcoes">
+              <a href="{% url 'dashboard:editar_meta' meta.id %}">Editar meta</a>
+
+              <form method="post" action="{% url 'dashboard:alternar_conclusao' meta.id %}">
+                {% csrf_token %}
+                <button type="submit">{% if meta.completo %}Reabrir meta{% else %}Concluir meta{% endif %}</button>
+              </form>
+
+              <form method="post" action="{% url 'dashboard:deletar_meta' meta.id %}"
+                    onsubmit="return confirm('Excluir a meta &quot;{{ meta.nome|escapejs }}&quot;?');">
+                {% csrf_token %}
+                <button type="submit" class="btn-excluir">Excluir meta</button>
+              </form>
+            </div>
+          </details>
+        </article>
+      {% empty %}
+        <p class="fm-vazio">Você ainda não criou nenhuma meta. Clique no + para começar.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Botão de nova meta -->
+    <div class="fm-nova">
+      <button type="button" class="fm-mais" onclick="document.getElementById('modal-meta').showModal()">
+        <span class="fm-mais__sinal">+</span>
+        <span class="fm-mais__texto">Adicione uma nova meta</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Janela: criar nova meta -->
+  <dialog id="modal-meta" class="fm-modal" onclick="if (event.target === this) this.close()">
+    <h2 class="fm-modal__topo">Adicione:</h2>
+
+    <form method="post" class="fm-modal__corpo">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="fm-esg" role="radiogroup" aria-label="Pilar ESG">
+        <input type="radio" name="tipo_esg" id="esg-E" value="E" required {% if form.tipo_esg.value == 'E' %}checked{% endif %}>
+        <label for="esg-E" title="Ambiental">E</label>
+
+        <input type="radio" name="tipo_esg" id="esg-S" value="S" {% if form.tipo_esg.value == 'S' %}checked{% endif %}>
+        <label for="esg-S" title="Social">S</label>
+
+        <input type="radio" name="tipo_esg" id="esg-G" value="G" {% if form.tipo_esg.value == 'G' %}checked{% endif %}>
+        <label for="esg-G" title="Governança">G</label>
+      </div>
+      <p class="fm-dica">Escolha o pilar da sua meta!</p>
+      {% for erro in form.tipo_esg.errors %}
+        <div class="alert alert-error" role="alert">{{ erro }}</div>
+      {% endfor %}
+
+      {% for campo in form %}
+        {% if campo.name != 'tipo_esg' %}
+          <div class="form-group">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% for erro in campo.errors %}
+              <div class="alert alert-error" role="alert">{{ erro }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <div class="fm-modal__acoes">
+        <button type="submit">Criar meta</button>
+        <button type="button" class="fm-cancelar" onclick="this.closest('dialog').close()">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  {% if form.errors %}
+    <script>document.getElementById('modal-meta').showModal();</script>
+  {% endif %}
+{% endblock %}
