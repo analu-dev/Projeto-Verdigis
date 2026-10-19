@@ -36,8 +36,11 @@ class SignupForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs['placeholder'] = 'Digite seu nome de usuário'
         self.fields['email'].widget.attrs['placeholder'] = 'seuemail@exemplo.com'
+        self.fields['cpf'].widget.attrs['data-mask'] = 'cpf'
         self.fields['cpf'].widget.attrs['placeholder'] = '000.000.000-00'
+        self.fields['cnpj'].widget.attrs['data-mask'] = 'cnpj'
         self.fields['cnpj'].widget.attrs['placeholder'] = '00.000.000/0000-00'
+        self.fields['telefone'].widget.attrs['data-mask'] = 'telefone'
         self.fields['telefone'].widget.attrs['placeholder'] = '(81) 99999-8888'
         self.fields['password1'].widget.attrs['placeholder'] = 'Crie uma senha'
         self.fields['password2'].widget.attrs['placeholder'] = 'Repita a senha'
@@ -116,18 +119,18 @@ class DeleteAccountForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['name', 'cnpj', 'email', 'profile_picture']
+        fields = ['nome', 'cnpj', 'email', 'foto_perfil']
         labels = {
-            'name': 'Nome',
+            'nome': 'Nome',
             'cnpj': 'CNPJ',
             'email': 'E-mail',
-            'profile_picture': 'Foto de Perfil',
+            'foto_perfil': 'Foto de Perfil',
         }
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
+            'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
             'cnpj': forms.TextInput(attrs={'placeholder': 'Digite seu CNPJ'}),
             'email': forms.EmailInput(attrs={'placeholder': 'Digite seu e-mail'}),
-            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
+            'foto_perfil': forms.FileInput(attrs={'accept': 'image/*'}),
         }
 
     def clean_cnpj(self):
@@ -136,8 +139,8 @@ class ProfileForm(forms.ModelForm):
             validate_cnpj(cnpj)
         return cnpj
 
-    def clean_profile_picture(self):
-        foto = self.cleaned_data.get('profile_picture')
+    def clean_foto_perfil(self):
+        foto = self.cleaned_data.get('foto_perfil')
         if isinstance(foto, UploadedFile) and foto.size > TAMANHO_MAX_AVATAR:
             raise forms.ValidationError('A imagem deve ter no máximo 2 MB.')
         return foto
@@ -176,9 +179,23 @@ class CompanyForm(forms.ModelForm):
             'celular_whatsapp': '(00) 99999-8888',
             'senha_funcionarios': 'Senha para seus funcionários acessarem',
         }
-        for name, text in placeholders.items():
-            self.fields[name].widget.attrs['placeholder'] = text
+
+        for nome, text in placeholders.items():
+            self.fields[nome].widget.attrs['placeholder'] = text
+            
+        for nome, text in placeholders.items():
+            self.fields[nome].widget.attrs['placeholder'] = text
             self.fields['niche'].empty_label = 'Selecione o nicho'
+
+        mascaras = {
+            'cnpj': 'cnpj',
+            'cep': 'cep',
+            'telefone_fixo': 'telefone',
+            'celular_whatsapp': 'telefone',
+        }
+        for name, mask in mascaras.items():
+            self.fields[name].widget.attrs['data-mask'] = mask
+
         for field in self.fields.values():
             field.widget.attrs.setdefault('class', 'form-control')
 
@@ -197,9 +214,9 @@ class CompanyForm(forms.ModelForm):
 
     def is_valid(self):
         valid = super().is_valid()
-        for name in self.errors:
-            if name in self.fields:
-                attrs = self.fields[name].widget.attrs
+        for nome in self.errors:
+            if nome in self.fields:
+                attrs = self.fields[nome].widget.attrs
                 if 'is-invalid' not in attrs.get('class', ''):
                     attrs['class'] = attrs.get('class', '') + ' is-invalid'
         return valid
@@ -214,6 +231,7 @@ class EmployeeSignupForm(SignupForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.company = None
+        self.fields['cnpj'].widget.attrs['data-mask'] = 'cnpj'
         self.fields['cnpj'].widget.attrs['placeholder'] = '00.000.000/0000-00'
         self.fields['senha_empresa'].widget.attrs['placeholder'] = 'Senha fornecida pela empresa'
 
@@ -253,6 +271,7 @@ class EmployeeLoginForm(LoginForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['cnpj'].widget.attrs['data-mask'] = 'cnpj'
         self.fields['cnpj'].widget.attrs['placeholder'] = '00.000.000/0000-00'
         self.fields['senha_empresa'].widget.attrs['placeholder'] = 'Senha fornecida pela empresa'
 
@@ -279,18 +298,18 @@ class EmployeeLoginForm(LoginForm):
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['name', 'profile_picture']
+        fields = ['nome', 'foto_perfil']
         labels = {
-            'name': 'Nome',
-            'profile_picture': 'Foto de Perfil',
+            'nome': 'Nome',
+            'foto_perfil': 'Foto de Perfil',
         }
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
-            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
+            'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
+            'foto_perfil': forms.FileInput(attrs={'accept': 'image/*'}),
         }
 
     def clean_profile_picture(self):
-        foto = self.cleaned_data.get('profile_picture')
+        foto = self.cleaned_data.get('foto_perfil')
         if isinstance(foto, UploadedFile) and foto.size > TAMANHO_MAX_AVATAR:
             raise forms.ValidationError('A imagem deve ter no máximo 2 MB.')
         return foto
