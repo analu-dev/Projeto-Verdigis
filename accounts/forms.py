@@ -113,18 +113,18 @@ class DeleteAccountForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['name', 'cnpj', 'email', 'profile_picture']
+        fields = ['nome', 'cnpj', 'email', 'foto_perfil']
         labels = {
-            'name': 'Nome',
+            'nome': 'Nome',
             'cnpj': 'CNPJ',
             'email': 'E-mail',
-            'profile_picture': 'Foto de Perfil',
+            'foto_perfil': 'Foto de Perfil',
         }
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
+            'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
             'cnpj': forms.TextInput(attrs={'placeholder': 'Digite seu CNPJ'}),
             'email': forms.EmailInput(attrs={'placeholder': 'Digite seu e-mail'}),
-            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
+            'foto_perfil': forms.FileInput(attrs={'accept': 'image/*'}),
         }
 
     def clean_cnpj(self):
@@ -133,8 +133,8 @@ class ProfileForm(forms.ModelForm):
             validate_cnpj(cnpj)
         return cnpj
 
-    def clean_profile_picture(self):
-        foto = self.cleaned_data.get('profile_picture')
+    def clean_foto_perfil(self):
+        foto = self.cleaned_data.get('foto_perfil')
         if isinstance(foto, UploadedFile) and foto.size > TAMANHO_MAX_AVATAR:
             raise forms.ValidationError('A imagem deve ter no máximo 2 MB.')
         return foto
@@ -164,8 +164,8 @@ class CompanyForm(forms.ModelForm):
             'telefone_fixo': '(81) 3333-4444',
             'celular_whatsapp': '(81) 99999-8888',
         }
-        for name, text in placeholders.items():
-            self.fields[name].widget.attrs['placeholder'] = text
+        for nome, text in placeholders.items():
+            self.fields[nome].widget.attrs['placeholder'] = text
         for field in self.fields.values():
             field.widget.attrs.setdefault('class', 'form-control')
 
@@ -184,9 +184,9 @@ class CompanyForm(forms.ModelForm):
 
     def is_valid(self):
         valid = super().is_valid()
-        for name in self.errors:
-            if name in self.fields:
-                attrs = self.fields[name].widget.attrs
+        for nome in self.errors:
+            if nome in self.fields:
+                attrs = self.fields[nome].widget.attrs
                 if 'is-invalid' not in attrs.get('class', ''):
                     attrs['class'] = attrs.get('class', '') + ' is-invalid'
         return valid
