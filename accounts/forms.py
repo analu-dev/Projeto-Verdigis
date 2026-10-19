@@ -298,18 +298,18 @@ class EmployeeLoginForm(LoginForm):
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['name', 'profile_picture']
+        fields = ['nome', 'foto_perfil']
         labels = {
-            'name': 'Nome',
-            'profile_picture': 'Foto de Perfil',
+            'nome': 'Nome',
+            'foto_perfil': 'Foto de Perfil',
         }
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
-            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
+            'nome': forms.TextInput(attrs={'placeholder': 'Digite seu nome'}),
+            'foto_perfil': forms.FileInput(attrs={'accept': 'image/*'}),
         }
 
     def clean_profile_picture(self):
-        foto = self.cleaned_data.get('profile_picture')
+        foto = self.cleaned_data.get('foto_perfil')
         if isinstance(foto, UploadedFile) and foto.size > TAMANHO_MAX_AVATAR:
             raise forms.ValidationError('A imagem deve ter no máximo 2 MB.')
         return foto
