@@ -11,11 +11,12 @@
 {% endcomment %}
 
 {% block title %}Dashboard - Verdigis{% endblock %}
+{% block fundo %}fundo-4{% endblock %}
 
 {% block head %}<h1 class="dash-banner">Bem-vindo(a) à página de ESG da sua empresa!</h1>{% endblock head %}
 
 {% block content %}
- 
+ <div class="moldura-vidro">
   <section class="dash-corpo">
     <nav class="dash-menu" aria-label="Menu principal">
       <a class="dash-botao" href="{% url 'dashboard:dashboard_social' %}">Central de Avaliações</a>
@@ -34,4 +35,5 @@
       {% endif %}
     </aside>
   </section>
+</div>
 {% endblock %}

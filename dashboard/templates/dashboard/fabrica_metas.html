@@ -12,11 +12,12 @@
 {% endcomment %}
 
 {% block title %}Fábrica de Metas - Verdigis{% endblock %}
+{% block fundo %}fundo-5{% endblock %}
 
 {% block head %}<h1 class="dash-banner">Fábrica de Metas</h1>{% endblock head %}
 
 {% block content %}
-
+<div class="moldura-vidro">
   <section class="dash-corpo">
 
     <!-- Lista de metas -->
@@ -75,7 +76,7 @@
       </button>
     </div>
   </section>
-
+</div>
   <!-- Janela: criar nova meta -->
   <dialog id="modal-meta" class="fm-modal" onclick="if (event.target === this) this.close()">
     <h2 class="fm-modal__topo">Adicione:</h2>
