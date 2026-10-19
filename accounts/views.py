@@ -256,3 +256,14 @@ def login_funcionario(request):
     if request.method == 'POST':
         _registrar_falha(request, 'func_login', form)
     return render(request, 'accounts/funcionario_form.html', {**contexto, 'form': form})
+
+@login_required
+def edit_profile(request):
+    profile_obj, _ = UserProfile.objects.get_or_create(user=request.user)
+    form = ProfileForm(request.POST or None, request.FILES or None, instance=profile_obj)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, 'Perfil atualizado com sucesso.')
+        return redirect('profile')
+
+    return render(request, 'accounts/edit_profile.html', {'form': form})
