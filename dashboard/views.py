@@ -2,12 +2,11 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
 from .forms import FormsMetas
 from .models import Meta, RelatoSocialVerdigis
-
-
 from django.utils import timezone
+from django.contrib import messages
+from .forms import AvaliacaoESGForm
 
 @login_required
 def home(request):
@@ -113,3 +112,19 @@ def dashboard_social_verdigis(request):
 def detalhe_relato_view(request, relato_id):
     relato = get_object_or_404(RelatoSocialVerdigis, id=relato_id)
     return render(request, 'dashboard/avaliacao_detalhe.html', {'relato': relato})
+
+@login_required 
+def adicionar_avaliacao(request):
+    if request.method == 'POST':
+        form = AvaliacaoESGForm(request.POST)
+        if form.is_valid():
+            avaliacao = form.save(commit=False) 
+            avaliacao.funcionario = request.user 
+            avaliacao.save() 
+
+            messages.success(request, 'Sua avaliação ESG foi enviada com sucesso!')
+            return redirect('adicionar_avaliacao')
+    else:
+        form = AvaliacaoESGForm()
+
+    return render(request, 'avaliacoes/adicionar.html', {'form': form})

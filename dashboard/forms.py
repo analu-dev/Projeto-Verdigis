@@ -1,6 +1,6 @@
 from django import forms
 from .models import Meta
-
+from .models import AvaliacaoESG
 #fabrica de metas!!
 class FormsMetas(forms.ModelForm):
     class Meta:
@@ -14,4 +14,14 @@ class FormsMetas(forms.ModelForm):
             'deadline': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'resumo': forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Descrição da meta...'}),
             'prioridade': forms.Select(attrs={'class': 'form-select'}),
+        }
+class AvaliacaoESGForm(forms.ModelForm):
+    class Meta:
+        model = AvaliacaoESG
+        fields = ['empresa', 'pilar', 'nota', 'comentario']
+        widgets = {
+            'nota': forms.NumberInput(attrs={'min': 1, 'max': 5, 'class': 'form-control'}),
+            'pilar': forms.Select(attrs={'class': 'form-control'}),
+            'comentario': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
+            'empresa': forms.Select(attrs={'class': 'form-control'}),
         }
