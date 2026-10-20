@@ -73,9 +73,16 @@
 </div>
 
 <script>
-  document.querySelectorAll('.dash-aviso__fechar').forEach(function (botao) {
-    botao.addEventListener('click', function () {
-      var aviso = botao.closest('.dash-aviso');
+  document.querySelectorAll('.dash-aviso').forEach(function (aviso) {
+    var chave = 'aviso-fechado-' + (aviso.classList.contains('dash-aviso--ok') ? 'ok' : 'atraso');
+
+    if (localStorage.getItem(chave)) {
+      aviso.remove();
+      return;
+    }
+
+    aviso.querySelector('.dash-aviso__fechar').addEventListener('click', function () {
+      localStorage.setItem(chave, '1');
       aviso.classList.add('some');
       setTimeout(function () { aviso.remove(); }, 300);
     });
