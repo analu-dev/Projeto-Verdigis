@@ -1,4 +1,5 @@
 {% extends "forum/base.html" %}
+{% load static %}
 
 {% comment %}
   Central de avaliações (view dashboard_social_verdigis). Exige login. Método: GET.
@@ -17,7 +18,11 @@
 {% block content %}
   <div class="moldura-vidro">
   <section class="dash-corpo av-corpo">
-
+    <div class="av-topo">
+      <a class="av-voltar" href="{% url 'dashboard:dashboard' %}" aria-label="Voltar para o dashboard">
+        <img class="av-voltar__icone" src="{% static 'img/icone-seta.svg' %}" alt="">
+      </a>
+    </div>
     <!-- Coluna dos temas (com um tema escolhido, só ele aparece) -->
     <div class="av-temas">
       {% for t in temas %}

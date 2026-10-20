@@ -1,4 +1,5 @@
 {% extends "forum/base.html" %}
+{% load static %}
 
 {% comment %}
   Fábrica de metas (view fabrica_metas_view). Exige login. Métodos: GET e POST (cria meta).
@@ -18,8 +19,12 @@
 
 {% block content %}
 <div class="moldura-vidro">
-  <section class="dash-corpo">
-
+  <section class="dash-corpo fm-corpo">
+      <div class="av-topo">
+        <a class="av-voltar" href="{% url 'dashboard:dashboard' %}" aria-label="Voltar para o dashboard">
+          <img class="av-voltar__icone" src="{% static 'img/icone-seta.svg' %}" alt="">
+        </a>
+      </div>
     <!-- Lista de metas -->
     <div class="fm-lista">
       {% for meta in metas %}
