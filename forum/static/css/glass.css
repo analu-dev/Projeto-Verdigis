@@ -121,3 +121,7 @@ body::before {
         backdrop-filter: none;
     }
 }
+
+.moldura-vidro > .secao-conteudo{
+    margin-bottom: 0;
+}
