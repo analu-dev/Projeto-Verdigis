@@ -16,7 +16,6 @@ def _obter_empresa_usuario(user):
         company = user.FUNCIONARIO.company
     return company
 
-
 @login_required
 def home(request):
     company = _obter_empresa_usuario(request.user)
@@ -173,3 +172,19 @@ def dashboard_social_verdigis(request):
 def detalhe_relato_view(request, relato_id):
     relato = get_object_or_404(RelatoSocialVerdigis, id=relato_id)
     return render(request, 'dashboard/avaliacao_detalhe.html', {'relato': relato})
+
+@login_required 
+def adicionar_avaliacao(request):
+    if request.method == 'POST':
+        form = AvaliacaoESGForm(request.POST)
+        if form.is_valid():
+            avaliacao = form.save(commit=False) 
+            avaliacao.funcionario = request.user 
+            avaliacao.save() 
+
+            messages.success(request, 'Sua avaliação ESG foi enviada com sucesso!')
+            return redirect('adicionar_avaliacao')
+    else:
+        form = AvaliacaoESGForm()
+
+    return render(request, 'avaliacoes/adicionar.html', {'form': form})

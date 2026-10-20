@@ -14,7 +14,7 @@
 {% block title %}Dashboard - Verdigis{% endblock %}
 {% block fundo %}fundo-4{% endblock %}
 
-{% block head %}<h1 class="dash-banner">Bem-vindo(a) à página de ESG da sua empresa!</h1>{% endblock head %}
+{% block head %}<h1 class="dash-banner">BEM-VINDO(A) À PÁGINA DE ESG DA SUA EMPRESA</h1>{% endblock head %}
 
 {% block content %}
  <script type="module"
@@ -50,19 +50,42 @@
       auto-rotate
       rotation-per-second="20deg"
       disable-zoom
-      shadow-intensity="1"
+      shadow-intensity="0"
       environment-image="neutral"
       exposure="1.1">
     </model-viewer>
 
     <aside class="dash-avisos" aria-label="Avisos">
       {% if metas_concluidas %}
-        <div class="dash-aviso dash-aviso--ok">Nova tarefa concluída!</div>
+        <div class="dash-aviso dash-aviso--ok">
+          <span>Nova meta concluída!</span>
+          <button type="button" class="dash-aviso__fechar" aria-label="Fechar aviso">&times;</button>
+        </div>
       {% endif %}
       {% if metas_atrasadas %}
-        <div class="dash-aviso dash-aviso--atraso">Atenção, tarefa atrasada!</div>
+        <div class="dash-aviso dash-aviso--atraso">
+          <span>Atenção, meta atrasada!</span>
+          <button type="button" class="dash-aviso__fechar" aria-label="Fechar aviso">&times;</button>
+        </div>
       {% endif %}
     </aside>
   </section>
 </div>
+
+<script>
+  document.querySelectorAll('.dash-aviso').forEach(function (aviso) {
+    var chave = 'aviso-fechado-' + (aviso.classList.contains('dash-aviso--ok') ? 'ok' : 'atraso');
+
+    if (localStorage.getItem(chave)) {
+      aviso.remove();
+      return;
+    }
+
+    aviso.querySelector('.dash-aviso__fechar').addEventListener('click', function () {
+      localStorage.setItem(chave, '1');
+      aviso.classList.add('some');
+      setTimeout(function () { aviso.remove(); }, 300);
+    });
+  });
+</script>
 {% endblock %}

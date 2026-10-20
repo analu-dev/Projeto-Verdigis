@@ -21,7 +21,7 @@
             </a>
             <ul class="nav-links">
                 {% if user.is_authenticated %}
-                <li><a href="{% url 'dashboard:dashboard' %}">Início</a></li>
+                <li><a href="{% url 'dashboard:dashboard' %}">Dashboard</a></li>
                 {% if not user.companies.exists and not user.funcionario %}
                 <li><a href="{% url 'company_register' %}">Cadastrar empresa</a></li>
                 {% endif %}
@@ -70,4 +70,6 @@
     </footer>
 
 </body>
+
+
 </html>
