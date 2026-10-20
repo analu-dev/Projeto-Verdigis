@@ -1,7 +1,7 @@
 from django import forms
 from accounts.models import Funcionario
 from .models import Meta
-from .models import AvaliacaoESG
+from .models import RelatoSocialVerdigis
 #fabrica de metas!!
 class FormsMetas(forms.ModelForm):
     class Meta:
@@ -41,13 +41,14 @@ class FormsMetas(forms.ModelForm):
             cleaned_data['funcionario'] = None
 
         return cleaned_data
-class AvaliacaoESGForm(forms.ModelForm):
+
+class RelatoSocialForm(forms.ModelForm):
     class Meta:
-        model = AvaliacaoESG
-        fields = ['empresa', 'pilar', 'nota', 'comentario']
+        model = RelatoSocialVerdigis
+        fields = ['tema_esg', 'sentimento', 'mensagem', 'eh_anonimo']
         widgets = {
-            'nota': forms.NumberInput(attrs={'min': 1, 'max': 5, 'class': 'form-control'}),
-            'pilar': forms.Select(attrs={'class': 'form-control'}),
-            'comentario': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
-            'empresa': forms.Select(attrs={'class': 'form-control'}),
+            'tema_esg': forms.Select(attrs={'class': 'form-control'}),
+            'sentimento': forms.Select(attrs={'class': 'form-control'}),
+            'mensagem': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
         }
+
