@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 from django.utils import timezone
 
 from accounts.models import Company, Funcionario
-from .forms import FormsMetas
+from .forms import FormsMetas, AvaliacaoESGForm
 from .models import Meta, RelatoSocialVerdigis
 
 
