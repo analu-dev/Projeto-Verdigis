@@ -45,7 +45,7 @@ def fabrica_metas_view(request):
 
     if not company:
         messages.error(request, "Usuário não está associado a nenhuma empresa!")
-        return redirect('home')
+        return redirect('dashboard:dashboard')
 
     # Filtra a lista de acordo com o tipo de usuario
     if hasattr(request.user, 'FUNCIONARIO'): #esse hasattr serve justamente pra verificar se é funcionario ou geral
