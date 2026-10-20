@@ -121,11 +121,13 @@ def company_register(request):
                 with transaction.atomic():
                     company = form.save(commit=False)
                     company.responsavel = request.user
-                    company.set_senha_acesso(form.cleaned_data['senha_funcionarios'])
                     company.save()
+                    
+                    # Alterado 'tipo': 'empresa' para 'tipo': 'EMPRESA' (caixa alta)
+                    # para ficar compatível com o TIPO_CHOICES no models.py.
                     UserProfile.objects.update_or_create(
                         user=request.user,
-                        defaults={'tipo': 'empresa', 'nome_empresa': company.nome_fantasia},
+                        defaults={'tipo': 'EMPRESA', 'nome_empresa': company.nome_fantasia},
                     )
                 return redirect('company_success')
             except DatabaseError:
@@ -184,10 +186,8 @@ def _registrar_falha(request, escopo, form):
     chave = _chave_tentativas(request, escopo)
     if chave is None:
         return
-    if not any(
-        form.has_error(NON_FIELD_ERRORS, code=codigo)
-        for codigo in (CODIGO_CREDENCIAL_EMPRESA, 'invalid_login')
-    ):
+    # verifica erros no formulário
+    if not form.errors:
         return
     cache.add(chave, 0, JANELA_TENTATIVAS)
     try:

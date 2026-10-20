@@ -1051,3 +1051,98 @@ textarea::placeholder {
 .moldura-vidro:has(> .secao-pilares) {
     width: 100%;
 }
+
+.dash-aviso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: opacity 0.3s;
+}
+
+@keyframes aviso-saida {
+  to {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+}
+
+.dash-aviso.some {
+  animation: aviso-saida 0.3s ease-in forwards;
+}
+
+.dash-aviso__fechar {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dash-aviso__fechar:hover {
+  opacity: 0.7;
+}
+
+@keyframes aviso-entrada {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.dash-aviso {
+  animation: aviso-entrada 0.5s ease-out both;
+}
+
+/* o segundo aviso entra um pouco depois do primeiro */
+.dash-aviso:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+@keyframes moldura-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes conteudo-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* a moldura de vidro aparece primeiro, em qualquer página */
+.moldura-vidro {
+  animation: moldura-entrada 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* tudo que está dentro dela aparece logo depois, em sequência */
+.moldura-vidro > * {
+  animation: conteudo-entrada 0.6s ease-out 0.4s both;
+}
+.moldura-vidro > *:nth-child(2) { animation-delay: 0.5s; }
+.moldura-vidro > *:nth-child(3) { animation-delay: 0.6s; }
+.moldura-vidro > *:nth-child(4) { animation-delay: 0.7s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .moldura-vidro,
+  .moldura-vidro > * {
+    animation: none;
+  }
+}
