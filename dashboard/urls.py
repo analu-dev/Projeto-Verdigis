@@ -23,4 +23,6 @@ urlpatterns = [
     path('avaliacao/', views.dashboard_social_verdigis, name='dashboard_social'),
 
     path('avaliacao/<int:relato_id>/', views.detalhe_relato_view, name='detalhe_relato'),
+    
+    path('avaliacao/nova/', views.adicionar_avaliacao, name='adicionar_avaliacao'),
 ]
