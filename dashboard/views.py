@@ -4,9 +4,10 @@ from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from django.utils import timezone
+from urllib3 import request
 
 from accounts.models import Company, Funcionario
-from .forms import FormsMetas, AvaliacaoESGForm
+from .forms import FormsMetas, RelatoSocialForm
 from .models import Meta, RelatoSocialVerdigis
 
 
@@ -44,8 +45,8 @@ def fabrica_metas_view(request):
     company = _obter_empresa_usuario(request.user)
 
     if not company:
-        messages.error(request, "Usuário não está associado a nenhuma empresa!")
-        return redirect('dashboard:dashboard')
+        messages.error(request, "Cadastre sua empresa antes de usar a Fábrica de Metas.")
+        return redirect('company_register')
 
     # Filtra a lista de acordo com o tipo de usuario
     if hasattr(request.user, 'FUNCIONARIO'): #esse hasattr serve justamente pra verificar se é funcionario ou geral
@@ -173,18 +174,14 @@ def detalhe_relato_view(request, relato_id):
     relato = get_object_or_404(RelatoSocialVerdigis, id=relato_id)
     return render(request, 'dashboard/avaliacao_detalhe.html', {'relato': relato})
 
-@login_required 
+@login_required
 def adicionar_avaliacao(request):
     if request.method == 'POST':
-        form = AvaliacaoESGForm(request.POST)
+        form = RelatoSocialForm(request.POST)
         if form.is_valid():
-            avaliacao = form.save(commit=False) 
-            avaliacao.funcionario = request.user 
-            avaliacao.save() 
-
-            messages.success(request, 'Sua avaliação ESG foi enviada com sucesso!')
-            return redirect('adicionar_avaliacao')
+            form.save()
+            messages.success(request, 'Sua avaliação foi enviada com sucesso!')
+            return redirect('dashboard:adicionar_avaliacao')
     else:
-        form = AvaliacaoESGForm()
-
-    return render(request, 'avaliacoes/adicionar.html', {'form': form})
+        form = RelatoSocialForm()
+    return render(request, 'dashboard/adicionar.html', {'form': form})
