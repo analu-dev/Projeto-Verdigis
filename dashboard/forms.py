@@ -57,4 +57,8 @@ class RelatoSocialForm(forms.ModelForm):
             'sentimento': forms.Select(attrs={'class': 'form-control'}),
             'mensagem': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tema_esg'].choices = [('', 'Selecione o tema')] + list(self.fields['tema_esg'].choices)[1:]
+        self.fields['sentimento'].choices = [('', 'Selecione o tipo')] + list(self.fields['sentimento'].choices)[1:]
 
