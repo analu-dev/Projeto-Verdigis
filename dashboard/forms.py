@@ -46,6 +46,12 @@ class RelatoSocialForm(forms.ModelForm):
     class Meta:
         model = RelatoSocialVerdigis
         fields = ['tema_esg', 'sentimento', 'mensagem', 'eh_anonimo']
+        labels = {
+            'tema_esg': 'Tema',
+            'sentimento': 'Tipo de avaliação',
+            'mensagem': 'Sua mensagem',
+            'eh_anonimo': 'Enviar como anônimo',
+        }
         widgets = {
             'tema_esg': forms.Select(attrs={'class': 'form-control'}),
             'sentimento': forms.Select(attrs={'class': 'form-control'}),
