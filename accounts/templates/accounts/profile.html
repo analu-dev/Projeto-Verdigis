@@ -11,7 +11,7 @@
     <img class="profile-avatar" src="{{ user.profile.avatar_url }}" alt="Avatar de {{ user.username }}">
     <div>
       <h1>{{ user.get_full_name|default:user.username }}</h1>
-      <p>{{ user.username }}</p>
+      <p>@{{ user.username }}</p>
     </div>
   </div>
   <dl class="profile-info">
