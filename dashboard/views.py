@@ -1,37 +1,72 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from django.utils import timezone
+
+from accounts.models import Company, Funcionario
 from .forms import FormsMetas
 from .models import Meta, RelatoSocialVerdigis
-from django.utils import timezone
-from django.contrib import messages
-from .forms import AvaliacaoESGForm
+
+
+def _obter_empresa_usuario(user):
+    company = Company.objects.filter(responsavel = user).first()
+    if not company and hasattr(user, 'FUNCIONARIO'):
+        company = user.FUNCIONARIO.company
+    return company
 
 @login_required
 def home(request):
-    metas = Meta.objects.filter(usuario=request.user)
+    company = _obter_empresa_usuario(request.user)
+
+    if not company:
+        metas = Meta.objects.none()
+    elif hasattr(request.user, 'FUNCIONARIO'):
+        # Funcionário vê as metas gerais da empresa OU as metas individuais dele
+        metas = Meta.objects.filter(
+            company=company
+        ).filter(
+            Q(tipo='GERAL') | Q(funcionario=request.user.FUNCIONARIO)
+        )
+    else: # para empresa ver todas as metas
+        metas = Meta.objects.filter(company=company)
+
     return render(request, 'dashboard/dashboard.html', {
         'metas_atrasadas': metas.filter(completo=False, deadline__lt=timezone.localdate()).count(),
         'metas_concluidas': metas.filter(completo=True).count(),
     })
 
 
-
 #Fabrica de metas
 @login_required
 def fabrica_metas_view(request):
-    metas = Meta.objects.filter(usuario=request.user).order_by('completo', 'deadline')
+    company = _obter_empresa_usuario(request.user)
+
+    if not company:
+        messages.error(request, "Usuário não está associado a nenhuma empresa!")
+        return redirect('home')
+
+    # Filtra a lista de acordo com o tipo de usuario
+    if hasattr(request.user, 'FUNCIONARIO'): #esse hasattr serve justamente pra verificar se é funcionario ou geral
+        metas = Meta.objects.filter(
+            company=company
+        ).filter(
+            Q(tipo='GERAL') | Q(funcionario=request.user.FUNCIONARIO)
+        ).order_by('completo', 'deadline')
+    else:
+        metas = Meta.objects.filter(company=company).order_by('completo', 'deadline')
 
     if request.method == 'POST':
-        form = FormsMetas(request.POST)
+        form = FormsMetas(company, request.POST)
         if form.is_valid():
             meta = form.save(commit=False)
+            meta.company = company
             meta.usuario = request.user
             meta.save()
             return redirect('dashboard:fabrica_metas')
     else:
-        form = FormsMetas()
+        form = FormsMetas(company)
 
     return render(request, 'dashboard/fabrica_metas.html', {
         'metas': metas,
@@ -43,7 +78,6 @@ def fabrica_metas_view(request):
 @login_required
 def editar_meta_view(request, meta_id):
     meta = get_object_or_404(Meta, id=meta_id, usuario=request.user)
-
     if request.method == 'POST':
         form = FormsMetas(request.POST, instance=meta) #instace == atualizar
         if form.is_valid():
@@ -61,18 +95,44 @@ def editar_meta_view(request, meta_id):
 @login_required
 @require_POST
 def alternar_conclusao_view(request, meta_id):
-    meta = get_object_or_404(Meta, id=meta_id, usuario=request.user)
-    # Inverte o estado atual (se era False vira True, e vice-versa)
+    company = _obter_empresa_usuario(request.user)
+
+    # Permite alterar se a meta for da empresa e (for geral OU for atribuída ao funcionário/criada por ele)
+    if hasattr(request.user, 'FUNCIONARIO'):
+        meta = get_object_or_404(
+            Meta,
+            Q(id=meta_id, company=company) & 
+            (Q(tipo='GERAL') | Q(funcionario=request.user.FUNCIONARIO) | Q(usuario=request.user))
+        )
+    else:
+        # Gestor/Admin da empresa pode alterar qualquer meta da empresa
+        meta = get_object_or_404(Meta, id=meta_id, company=company)
+
     meta.completo = not meta.completo
     meta.save(update_fields=['completo'])
+    
     return redirect('dashboard:fabrica_metas')
+
 
 
 @login_required
 @require_POST
 def deletar_meta_view(request, meta_id):
-    meta = get_object_or_404(Meta, id=meta_id, usuario=request.user)
+    company = _obter_empresa_usuario(request.user)
+
+    # Permite apagar se a meta for da empresa e (for geral OU for do próprio funcionário)
+    if hasattr(request.user, 'FUNCIONARIO'):
+        meta = get_object_or_404(
+            Meta,
+            Q(id=meta_id, company=company) & 
+            (Q(tipo='GERAL') | Q(funcionario=request.user.FUNCIONARIO) | Q(usuario=request.user))
+        )
+    else:
+        # Gestor/Admin da empresa pode apagar qualquer meta da empresa
+        meta = get_object_or_404(Meta, id=meta_id, company=company)
+
     meta.delete()
+    
     return redirect('dashboard:fabrica_metas')
 
 

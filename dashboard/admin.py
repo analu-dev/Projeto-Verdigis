@@ -6,8 +6,8 @@ from .models import Meta, RelatoSocialVerdigis
 
 @admin.register(Meta)
 class MetaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'usuario', 'tipo_esg', 'prioridade', 'deadline', 'completo')
-    list_filter = ('tipo_esg', 'prioridade', 'completo')
+    list_display = ('nome', 'usuario', 'pilar_esg', 'prioridade', 'deadline', 'completo')
+    list_filter = ('pilar_esg', 'prioridade', 'completo')
     search_fields = ('nome', 'resumo', 'usuario__username')
 
 

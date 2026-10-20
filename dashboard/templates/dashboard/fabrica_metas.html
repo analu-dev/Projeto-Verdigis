@@ -28,9 +28,16 @@
 
           <div class="fm-card__corpo">
             <div class="fm-card__tags">
-              <span class="fm-badge" title="{{ meta.get_tipo_esg_display }}">{{ meta.tipo_esg }}</span>
+              <span class="fm-badge" title="{{ meta.get_pilar_esg_display }}">{{ meta.pilar_esg }}</span>
               <span class="fm-tag">Prazo: {{ meta.deadline|date:"d/m/Y" }}</span>
               <span class="fm-tag">Prioridade {{ meta.get_prioridade_display|lower }}</span>
+              
+              <!-- Badges para Tipo e Funcionário -->
+              <span class="fm-tag">{{ meta.get_tipo_display }}</span>
+              {% if meta.tipo == 'INDIVIDUAL' and meta.funcionario %}
+                <span class="fm-tag fm-tag--user"> {{ meta.funcionario.user.get_full_name|default:meta.funcionario.user.username }}</span>
+              {% endif %}
+
               {% if meta.completo %}
                 <span class="fm-tag fm-tag--ok">Concluída</span>
               {% elif meta.deadline < hoje %}
@@ -64,7 +71,7 @@
           </details>
         </article>
       {% empty %}
-        <p class="fm-vazio">Você ainda não criou nenhuma meta. Clique no + para começar.</p>
+        <p class="fm-vazio">Nenhuma meta cadastrada até o momento. Clique no + para começar.</p>
       {% endfor %}
     </div>
 
@@ -77,52 +84,78 @@
     </div>
   </section>
 </div>
-  <!-- Janela: criar nova meta -->
-  <dialog id="modal-meta" class="fm-modal" onclick="if (event.target === this) this.close()">
-    <h2 class="fm-modal__topo">Adicione:</h2>
 
-    <form method="post" class="fm-modal__corpo">
-      {% csrf_token %}
+<!-- Janela: criar nova meta -->
+<dialog id="modal-meta" class="fm-modal" onclick="if (event.target === this) this.close()">
+  <h2 class="fm-modal__topo">Adicione:</h2>
 
-      {% if form.non_field_errors %}
-        <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
+  <form method="post" class="fm-modal__corpo">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <!-- Seleção exclusiva pelos Botões ESG (campo 'pilar_esg') -->
+    <div class="fm-esg" role="radiogroup" aria-label="Pilar ESG">
+      <input type="radio" name="pilar_esg" id="esg-E" value="E" required {% if form.pilar_esg.value == 'E' %}checked{% endif %}>
+      <label for="esg-E" title="Ambiental">E</label>
+
+      <input type="radio" name="pilar_esg" id="esg-S" value="S" {% if form.pilar_esg.value == 'S' %}checked{% endif %}>
+      <label for="esg-S" title="Social">S</label>
+
+      <input type="radio" name="pilar_esg" id="esg-G" value="G" {% if form.pilar_esg.value == 'G' %}checked{% endif %}>
+      <label for="esg-G" title="Governança">G</label>
+    </div>
+    <p class="fm-dica">Escolha o pilar da sua meta!</p>
+    {% for erro in form.pilar_esg.errors %}
+      <div class="alert alert-error" role="alert">{{ erro }}</div>
+    {% endfor %}
+
+    <!-- Renderização dos demais campos (oculta 'pilar_esg' para evitar duplicação) -->
+    {% for campo in form %}
+      {% if campo.name != 'pilar_esg' %}
+        <div class="form-group" {% if campo.name == 'funcionario' %}id="campo-funcionario-container"{% endif %}>
+          <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+          {{ campo }}
+          {% for erro in campo.errors %}
+            <div class="alert alert-error" role="alert">{{ erro }}</div>
+          {% endfor %}
+        </div>
       {% endif %}
+    {% endfor %}
 
-      <div class="fm-esg" role="radiogroup" aria-label="Pilar ESG">
-        <input type="radio" name="tipo_esg" id="esg-E" value="E" required {% if form.tipo_esg.value == 'E' %}checked{% endif %}>
-        <label for="esg-E" title="Ambiental">E</label>
+    <div class="fm-modal__acoes">
+      <button type="submit">Criar meta</button>
+      <button type="button" class="fm-cancelar" onclick="this.closest('dialog').close()">Cancelar</button>
+    </div>
+  </form>
+</dialog>
 
-        <input type="radio" name="tipo_esg" id="esg-S" value="S" {% if form.tipo_esg.value == 'S' %}checked{% endif %}>
-        <label for="esg-S" title="Social">S</label>
+{% if form.errors %}
+  <script>document.getElementById('modal-meta').showModal();</script>
+{% endif %}
 
-        <input type="radio" name="tipo_esg" id="esg-G" value="G" {% if form.tipo_esg.value == 'G' %}checked{% endif %}>
-        <label for="esg-G" title="Governança">G</label>
-      </div>
-      <p class="fm-dica">Escolha o pilar da sua meta!</p>
-      {% for erro in form.tipo_esg.errors %}
-        <div class="alert alert-error" role="alert">{{ erro }}</div>
-      {% endfor %}
+<!-- JavaScript para exibição condicional do Funcionário -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const selectTipo = document.querySelector('select[name="tipo"]');
+    const containerFuncionario = document.getElementById('campo-funcionario-container');
 
-      {% for campo in form %}
-        {% if campo.name != 'tipo_esg' %}
-          <div class="form-group">
-            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
-            {{ campo }}
-            {% for erro in campo.errors %}
-              <div class="alert alert-error" role="alert">{{ erro }}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endfor %}
+    function alternarExibicaoFuncionario() {
+      if (!selectTipo || !containerFuncionario) return;
+      
+      if (selectTipo.value === 'INDIVIDUAL') {
+        containerFuncionario.style.display = 'block';
+      } else {
+        containerFuncionario.style.display = 'none';
+      }
+    }
 
-      <div class="fm-modal__acoes">
-        <button type="submit">Criar meta</button>
-        <button type="button" class="fm-cancelar" onclick="this.closest('dialog').close()">Cancelar</button>
-      </div>
-    </form>
-  </dialog>
-
-  {% if form.errors %}
-    <script>document.getElementById('modal-meta').showModal();</script>
-  {% endif %}
+    if (selectTipo) {
+      selectTipo.addEventListener('change', alternarExibicaoFuncionario);
+      alternarExibicaoFuncionario();
+    }
+  });
+</script>
 {% endblock %}
