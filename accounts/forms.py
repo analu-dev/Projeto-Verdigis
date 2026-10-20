@@ -180,11 +180,13 @@ class CompanyForm(forms.ModelForm):
             'senha_funcionarios': 'Senha para seus funcionários acessarem',
         }
 
+        #Adicionada checagem de chave nome para evitar KeyError
         for nome, text in placeholders.items():
-            self.fields[nome].widget.attrs['placeholder'] = text
-            
-        for nome, text in placeholders.items():
-            self.fields[nome].widget.attrs['placeholder'] = text
+            if nome in self.fields:
+                self.fields[nome].widget.attrs['placeholder'] = text
+
+        #Removido o loop duplicado de placeholders e mantida apenas a definição do empty_label do nicho
+        if 'niche' in self.fields:
             self.fields['niche'].empty_label = 'Selecione o nicho'
 
         mascaras = {
@@ -194,7 +196,8 @@ class CompanyForm(forms.ModelForm):
             'celular_whatsapp': 'telefone',
         }
         for name, mask in mascaras.items():
-            self.fields[name].widget.attrs['data-mask'] = mask
+            if name in self.fields:
+                self.fields[name].widget.attrs['data-mask'] = mask
 
         for field in self.fields.values():
             field.widget.attrs.setdefault('class', 'form-control')
@@ -212,6 +215,17 @@ class CompanyForm(forms.ModelForm):
     def clean_uf(self):
         return self.cleaned_data['uf'].strip().upper()
 
+    #Método save() adicionado. O formulário lia a senha digitada no campo 'senha_funcionarios',
+    # mas não a gravava no objeto Company. Agora chama o set_senha_acesso(senha) para criptografar e salvar no banco.
+    def save(self, commit=True):
+        company = super().save(commit=False)
+        senha_raw = self.cleaned_data.get('senha_funcionarios')
+        if senha_raw:
+            company.set_senha_acesso(senha_raw)
+        if commit:
+            company.save()
+        return company
+
     def is_valid(self):
         valid = super().is_valid()
         for nome in self.errors:
@@ -223,9 +237,10 @@ class CompanyForm(forms.ModelForm):
 
 
 class EmployeeSignupForm(SignupForm):
-    cnpj = forms.CharField(label='CNPJ da empresa')
+    #Adicionado required=True explícito para garantir preenchimento
+    cnpj = forms.CharField(label='CNPJ da empresa', required=True)
     senha_empresa = forms.CharField(
-        label='Senha da empresa', strip=False, widget=forms.PasswordInput()
+        label='Senha da empresa', strip=False, widget=forms.PasswordInput(), required=True
     )
 
     def __init__(self, *args, **kwargs):
@@ -235,9 +250,13 @@ class EmployeeSignupForm(SignupForm):
         self.fields['cnpj'].widget.attrs['placeholder'] = '00.000.000/0000-00'
         self.fields['senha_empresa'].widget.attrs['placeholder'] = 'Senha fornecida pela empresa'
 
+   
+    def clean_cnpj(self):
+        return _normalizar_cnpj(self.cleaned_data.get('cnpj'))
+
     def clean(self):
         cleaned = super().clean()
-        cnpj = _normalizar_cnpj(cleaned.get('cnpj'))
+        cnpj = cleaned.get('cnpj')
         senha = cleaned.get('senha_empresa')
         if cnpj and senha:
             company = Company.objects.filter(cnpj=cnpj).first()
@@ -249,17 +268,20 @@ class EmployeeSignupForm(SignupForm):
         return cleaned
 
     def save(self, commit=True):
-        user = super().save(commit=True)
-        Funcionario.objects.create(user=user, company=self.company)
-        UserProfile.objects.update_or_create(
-            user=user,
-            defaults={
-                'tipo': 'funcionario',
-                'nome_empresa': self.company.nome_fantasia,
-                'email': user.email,
-                'cnpj': '',
-            },
-        )
+        user = super().save(commit=commit)
+        # 1. Trocado 'tipo': 'funcionario' por 'tipo': 'FUNCIONARIO' para bater com o TIPO_CHOICES do UserProfile.
+        # 2. Adicionada a trava `and self.company` e uso do `get_or_create` para evitar duplicidades na tabela Funcionario.
+        if commit and self.company:
+            Funcionario.objects.get_or_create(user=user, company=self.company)
+            UserProfile.objects.update_or_create(
+                user=user,
+                defaults={
+                    'tipo': 'FUNCIONARIO',
+                    'nome_empresa': self.company.nome_fantasia,
+                    'email': user.email,
+                    'cnpj': '',
+                },
+            )
         return user
 
 
