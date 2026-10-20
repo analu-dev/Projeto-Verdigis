@@ -29,7 +29,7 @@
           <div class="fm-card__corpo">
             <div class="fm-card__tags">
               <span class="fm-badge" title="{{ meta.get_tipo_esg_display }}">{{ meta.tipo_esg }}</span>
-              <span class="fm-tag">Prazo: {{ meta.deadline|date:"d/m/Y" }}</span>
+              <span class="fm-tag"><b>Prazo:</b> {{ meta.deadline|date:"d/m/Y" }}</span>
               <span class="fm-tag">Prioridade {{ meta.get_prioridade_display|lower }}</span>
               {% if meta.completo %}
                 <span class="fm-tag fm-tag--ok">Concluída</span>
